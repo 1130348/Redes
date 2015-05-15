@@ -6,6 +6,7 @@
 package ui;
 
 import controller.Controller;
+import controller.Server;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -42,7 +43,7 @@ public class JanelaServidores extends javax.swing.JFrame {
 
 	private void iniciaComboBox() {
 
-		List<String> sa = controller.getlServersTotal();
+		List<Server> sa = controller.getlServers();
 		for (int i = 0; i < sa.size(); i++) {
 			nSa.add(sa.get(i) + "-Connected-On-On");
 		}

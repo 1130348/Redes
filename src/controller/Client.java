@@ -16,109 +16,47 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.net.SocketTimeoutException;
 
 class Client {
 
 	static InetAddress IPdestino;
 
-	public Client() throws Exception {
-		/*BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		 DatagramSocket sock = new DatagramSocket();
-		 sock.setBroadcast(true);
-		 IPdestino = InetAddress.getByName("255.255.255.255");
-		 byte[] data = new byte[300];
-		 String frase;
-		 while (true) {
-		 System.out.print("Frase a enviar (\"sair\" para terminar): ");
-		 frase = in.readLine();
-		 if (frase.compareTo("sair") == 0) {
-		 break;
-		 }
-		 data = frase.getBytes();
+	private static int TIMEOUT = 3;
 
-		 //Envia
-		 DatagramPacket request = new DatagramPacket(data, frase.length(), IPdestino, 9006);
-		 sock.send(request);
+	public Client() {
 
-		 //recebe resposta
-		 DatagramPacket reply = new DatagramPacket(data, data.length);
-		 sock.receive(reply);
-
-		 //Obtem IP
-		 IPdestino = reply.getAddress();
-		 frase = new String(reply.getData(), 0, reply.getLength());
-		 System.out.println("Resposta: " + frase);
-		 }
-		 sock.close();*/
-	}
-
-	public void getAvailableServers() {
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		DatagramSocket sock = null;
-		try {
-			sock = new DatagramSocket();
-		} catch (SocketException ex) {
-			Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
-		try {
-			sock.setBroadcast(
-				true);
-		} catch (SocketException ex) {
-			Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		try {
-			IPdestino = InetAddress.getByName("255.255.255.255");
-		} catch (UnknownHostException ex) {
-			Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		byte[] data = new byte[300];
-		String frase = null;
-
-		while (true) {
-			System.out.print("Frase a enviar (\"sair\" para terminar): ");
-
-			try {
-				frase = in.readLine();
-			} catch (IOException ex) {
-				Logger.getLogger(Client.class.getName()).
-					log(Level.SEVERE, null, ex);
-			}
-			if (frase.compareTo("sair") == 0) {
-				break;
-			}
-			data = frase.getBytes();
-
-			//pedido
-			DatagramPacket request = new DatagramPacket(data, frase.length(), IPdestino, 9999);
-			try {
-				sock.send(request);
-			} catch (IOException ex) {
-				Logger.getLogger(Client.class.getName()).
-					log(Level.SEVERE, null, ex);
-			}
-
-			//resposta
-			DatagramPacket reply = new DatagramPacket(data, data.length);
-			try {
-				sock.receive(reply);
-			} catch (IOException ex) {
-				Logger.getLogger(Client.class.getName()).
-					log(Level.SEVERE, null, ex);
-			}
-			IPdestino = reply.getAddress();
-			frase = new String(reply.getData(), 0, reply.getLength());
-			System.out.println("Resposta: " + frase);
-		}
-
-		sock.close();
 	}
 
 	public boolean registaNick(String nick) {
-		//send nick e faz regista no server
+		return true;
+	}
+
+	public boolean testaConexao(Server ser) throws SocketException, IOException {
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		DatagramSocket sock = new DatagramSocket();
+		sock.setSoTimeout(1000 * TIMEOUT); /* definir o tempo limite do socket */
+
+		IPdestino = ser.getIp();
+
+		byte[] data = new byte[300];
+		String frase = "ConnectTest";
+
+		data = frase.getBytes();
+		DatagramPacket request = new DatagramPacket(data, frase.length(), IPdestino, 27003);
+		sock.send(request);
+		DatagramPacket reply = new DatagramPacket(data, data.length);
+		try {
+			sock.receive(reply);
+			frase = new String(reply.getData(), 0, reply.getLength());
+			System.out.println("Conectado com Sucesso");
+		} catch (SocketTimeoutException ex) {
+			System.out.println("O servidor não respondeu");
+			return false;
+		}
+
+		sock.close();
 		return true;
 	}
 }

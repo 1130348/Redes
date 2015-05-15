@@ -6,6 +6,7 @@
 package ui;
 
 import controller.Controller;
+import controller.Server;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,6 +14,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -57,11 +60,19 @@ public class ListaServidores extends javax.swing.JFrame {
 	 */
 	public ListaServidores(UI ui, Controller controller) {
 
-		List<String> ls = new ArrayList<>();
-		ls.add("192.168.90.3");
-		ls.add("193.90.10.52");
-		ls.add("196.5.0.29");
-		ls.add("10.78.62.2");
+		List<Server> ls = new ArrayList<>();
+
+		Server s1 = null;
+		try {
+			s1 = new Server("TugaElite", InetAddress.
+							getByName("192.168.33.2"));
+		} catch (UnknownHostException ex) {
+			Logger.getLogger(ListaServidores.class.getName()).
+				log(Level.SEVERE, null, ex);
+		}
+
+		ls.add(s1);
+
 		controller.setlServers(ls);
 
 		initComponents();
@@ -346,37 +357,40 @@ public class ListaServidores extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(55, 55, 55)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)
-                        .addComponent(jButton2))
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jScrollPane2))))
-                .addContainerGap(57, Short.MAX_VALUE))
+                        .addGap(180, 180, 180)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jProgressBar1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel1)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(35, 35, 35)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel2)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(jLabel1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addComponent(jLabel2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(38, 38, 38)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -402,13 +416,13 @@ public class ListaServidores extends javax.swing.JFrame {
 		int i = 1;
 		if (!ls2.isEmpty() && ls2.get(0) != "Vazio") {
 			controller.setlServersActivos(ls2);
-			controller.setlServersTotal(controller.getlServersActivos());
+
 			jProgressBar1.setVisible(true);
 			jProgressBar1.setMaximum(100);
 			jProgressBar1.setMinimum(0);
-
-			for (int j = 1; j <= controller.getlServersActivos().size(); j++) {
-				if (controller.verify(j - 1)) {
+			for (int j = 0; j < controller.getlServersActivos().size(); j++) {
+				if (controller.testConnection(controller.getlServersActivos().
+					get(j))) {
 					jProgressBar1.setValue(j * ((100 / controller.
 						getlServersActivos().size()) + (100 % controller.
 						getlServersActivos().size())));
@@ -417,10 +431,10 @@ public class ListaServidores extends javax.swing.JFrame {
 					controller.setlServersActivos(null);
 					break;
 				}
+
 				if (j == controller.getlServersActivos().size()) {
 					jButton2.setEnabled(true);
 				}
-
 			}
 
 			jProgressBar1.updateUI();
@@ -465,23 +479,33 @@ public class ListaServidores extends javax.swing.JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
 				if (checkSound.isSelected()) {
-					File f = new File("LIB\\bip.mp3");
-					try {
-						FileInputStream fis = new FileInputStream(f);
-						BufferedInputStream bis = new BufferedInputStream(fis);
+					Thread play = new Thread(new Runnable() {
 
-						Player p = new Player(bis);
-						p.play();
+						@Override
+						public void run() {
 
-					} catch (FileNotFoundException ex) {
-						Logger.getLogger(ListaServidores.class.getName()).
-							log(Level.SEVERE, null, ex);
-					} catch (JavaLayerException ex) {
-						Logger.getLogger(ListaServidores.class.getName()).
-							log(Level.SEVERE, null, ex);
-					}
+							File f = new File("LIB\\bip.mp3");
+							try {
+								FileInputStream fis = new FileInputStream(f);
+								BufferedInputStream bis = new BufferedInputStream(fis);
+
+								Player p = new Player(bis);
+								p.play();
+
+							} catch (FileNotFoundException ex) {
+								Logger.
+									getLogger(ListaServidores.class.getName()).
+									log(Level.SEVERE, null, ex);
+							} catch (JavaLayerException ex) {
+								Logger.
+									getLogger(ListaServidores.class.getName()).
+									log(Level.SEVERE, null, ex);
+
+							}
+						}
+					});
+					play.start();
 				}
 
 			}
@@ -517,10 +541,6 @@ public class ListaServidores extends javax.swing.JFrame {
 		if (valida(te.getText()) == true) {
 			this.controller.setMyNick(te.getText());
 			Box b = new Box(ui, controller, checkSound.isSelected());
-
-			//testetestetestetestetestetestetestetestetestetestetestetestetestetestetestetestetestetestetestetesteteste
-			b.recebeMensagem("ArmandabreakOla e adeus.");
-			b.recebeMensagem("AndrebreakOla Pessoal");
 
 		} else {
 

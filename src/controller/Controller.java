@@ -5,8 +5,11 @@
  */
 package controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,40 +17,42 @@ import java.util.List;
  */
 public class Controller {
 
-	private List<String> lServers;
+	private List<Server> lServers;
 
 	private boolean flag;
 
-	private List<String> lServersActivos;
-
-	private List<String> lServersTotal;
-
-	private List<String> lServersStatus;
+	private List<Server> lServersActivos;
 
 	private String myNick;
 
 	private Client cl;
 
+	private boolean b;
+
 	public Controller() {
 
 		lServers = new ArrayList<>();
 		lServersActivos = new ArrayList<>();
-		lServersTotal = new ArrayList<>();
-		lServersStatus = new ArrayList<>();
 		flag = false;
+		try {
+			cl = new Client();
+		} catch (Exception ex) {
+			Logger.getLogger(Controller.class.getName()).
+				log(Level.SEVERE, null, ex);
+		}
 	}
 
 	/**
 	 * @return the lServers
 	 */
-	public List<String> getlServers() {
+	public List<Server> getlServers() {
 		return lServers;
 	}
 
 	/**
 	 * @param lServers the lServers to set
 	 */
-	public void setlServers(List<String> lServers) {
+	public void setlServers(List<Server> lServers) {
 		this.lServers = lServers;
 	}
 
@@ -75,7 +80,7 @@ public class Controller {
 	/**
 	 * @return the lServersActivos
 	 */
-	public List<String> getlServersActivos() {
+	public List<Server> getlServersActivos() {
 		return lServersActivos;
 	}
 
@@ -83,11 +88,12 @@ public class Controller {
 	 * @param lServersActivos the lServersActivos to set
 	 */
 	public void setlServersActivos(
-		List<String> lServersActivos) {
+		List<Server> lServersActivos) {
 		this.lServersActivos = lServersActivos;
 	}
 
 	public void connect() {
+
 		this.flag = true;
 
 	}
@@ -97,8 +103,10 @@ public class Controller {
 
 	}
 
-	public void disconnect() {
+	public void disconnect(Server ser) {
+
 		this.flag = false;
+
 	}
 
 	public boolean verify(int i) {
@@ -109,18 +117,22 @@ public class Controller {
 		return false;
 	}
 
-	/**
-	 * @return the lServersTotal
-	 */
-	public List<String> getlServersTotal() {
-		return lServersTotal;
-	}
+	public boolean testConnection(Server ser) {
 
-	/**
-	 * @param lServersTotal the lServersTotal to set
-	 */
-	public void setlServersTotal(List<String> lServersTotal) {
-		this.lServersTotal = lServersTotal;
+		Thread tr = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					b = cl.testaConexao(ser);
+				} catch (IOException ex) {
+					Logger.getLogger(Controller.class.getName()).
+						log(Level.SEVERE, null, ex);
+				}
+			}
+		});
+		tr.start();
+		return b;
 	}
 
 }
