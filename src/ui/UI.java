@@ -72,6 +72,7 @@ public class UI extends JFrame {
 		setResizable(true);
 		setLocationRelativeTo(null);
 		setVisible(true);
+
 	}
 
 	/**

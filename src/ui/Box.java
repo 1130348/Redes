@@ -227,7 +227,7 @@ public class Box extends javax.swing.JFrame {
 				} while (n.length() > 15 || n.length() == 0);
 
 				String sd[];
-				controller.setMyNick(n);
+				controller.registaNick(n);
 				sd = jTextPane1.getText().split("\n");
 				jTextPane1.setText("");
 				for (int i = 0; i < sd.length; i++) {
@@ -790,6 +790,14 @@ public class Box extends javax.swing.JFrame {
 	private void buttonActionEnter() {
 
 		if (!jTextField1.getText().equals("")) {
+			Thread novaThread = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					controller.enviaMsg(jTextField1.getText());
+				}
+			});
+			novaThread.start();
 
 			StyledDocument doc = jTextPane1.getStyledDocument();
 

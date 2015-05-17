@@ -57,21 +57,25 @@ public class ListaServidores extends javax.swing.JFrame {
 
 	/**
 	 * Creates new form ListaServidores
+	 *
+	 * @param ui
+	 * @param controller
 	 */
 	public ListaServidores(UI ui, Controller controller) {
 
 		List<Server> ls = new ArrayList<>();
 
-		Server s1 = null;
-		try {
-			s1 = new Server("TugaElite", InetAddress.
-							getByName("192.168.33.2"));
-		} catch (UnknownHostException ex) {
-			Logger.getLogger(ListaServidores.class.getName()).
-				log(Level.SEVERE, null, ex);
+		List<String> lIP = controller.importFile("teste.txt");
+		for (String lIP1 : lIP) {
+			Server s1 = new Server();
+			try {
+				s1.setIp(InetAddress.getByName(lIP1));
+			} catch (UnknownHostException ex) {
+				Logger.getLogger(ListaServidores.class.getName()).
+					log(Level.SEVERE, null, ex);
+			}
+			ls.add(s1);
 		}
-
-		ls.add(s1);
 
 		controller.setlServers(ls);
 
@@ -333,7 +337,7 @@ public class ListaServidores extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Connect");
+        jButton2.setText("Continue");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -413,31 +417,66 @@ public class ListaServidores extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-		int i = 1;
 		if (!ls2.isEmpty() && ls2.get(0) != "Vazio") {
 			controller.setlServersActivos(ls2);
 
 			jProgressBar1.setVisible(true);
 			jProgressBar1.setMaximum(100);
 			jProgressBar1.setMinimum(0);
-			for (int j = 0; j < controller.getlServersActivos().size(); j++) {
-				if (controller.testConnection(controller.getlServersActivos().
-					get(j))) {
-					jProgressBar1.setValue(j * ((100 / controller.
-						getlServersActivos().size()) + (100 % controller.
-						getlServersActivos().size())));
+			List<Server> lt = controller.getlServersActivos();
+			for (int j = 1; j <= lt.size(); j++) {
+				if (controller.testConnection(lt.get(j - 1))) {
+					jProgressBar1.setValue(j * ((100 / lt.size()) + (100 % lt.
+						size())));
+
 				} else {
+					jProgressBar1.setValue(0);
+					jProgressBar1.setVisible(false);
 					jButton2.setEnabled(false);
+
+					Server tes = lt.get(j - 1);
+					for (int k = 0; k < ls2.size(); k++) {
+						if (ls2.get(k).equals(tes)) {
+							if (ls.contains("Vazio")) {
+								ls.remove("Vazio");
+								ls.add(ls2.get(k));
+								ls2.remove(k);
+							} else {
+								ls.add(ls2.get(k));
+								ls2.remove(k);
+							}
+							String warn = tes.toString();
+							JOptionPane.
+								showMessageDialog(rootPane, "Server: " + warn + " não esta disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
+
+						}
+					}
+
 					controller.setlServersActivos(null);
 					break;
 				}
 
-				if (j == controller.getlServersActivos().size()) {
+				if (j == lt.size()) {
 					jButton2.setEnabled(true);
 				}
 			}
 
 			jProgressBar1.updateUI();
+			jList1.removeAll();
+			jList1.setListData(ls.toArray());
+			jList2.removeAll();
+			if (ls2.isEmpty()) {
+				ls2.add("Vazio");
+			}
+			jList2.setListData(ls2.toArray());
+			if (ls2.contains("Vazio")) {
+				jList2.setEnabled(false);
+			}
+
+			jList1.setEnabled(true);
+			jList1.updateUI();
+			jList2.updateUI();
+			jPanel1.updateUI();
 
 		} else {
 
@@ -445,12 +484,12 @@ public class ListaServidores extends javax.swing.JFrame {
 				showMessageDialog(rootPane, "Lista Vazia!", "Erro", JOptionPane.INFORMATION_MESSAGE);
 
 		}
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
 		this.dispose();
-		controller.connect();
 
 		JLabel nn = new JLabel("NickName :");
 
@@ -458,7 +497,7 @@ public class ListaServidores extends javax.swing.JFrame {
 		JTextFieldLimit j = new JTextFieldLimit(15);
 		te.setDocument(j);
 
-		JButton button = new JButton("OK");
+		JButton button = new JButton("Connect");
 
 		InputMap im = te.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 		ActionMap am = te.getActionMap();
@@ -539,8 +578,16 @@ public class ListaServidores extends javax.swing.JFrame {
 	private void buttonAccao() {
 
 		if (valida(te.getText()) == true) {
-			this.controller.setMyNick(te.getText());
+			controller.registaNick(te.getText());
 			Box b = new Box(ui, controller, checkSound.isSelected());
+			Thread tconnect = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					controller.connect(b);
+				}
+			});
+			tconnect.start();
 
 		} else {
 

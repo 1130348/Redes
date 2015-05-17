@@ -6,10 +6,16 @@
 package controller;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ui.Box;
 
 /**
  *
@@ -28,6 +34,8 @@ public class Controller {
 	private Client cl;
 
 	private boolean b;
+
+	final Charset ENCODING = StandardCharsets.UTF_8;
 
 	public Controller() {
 
@@ -60,14 +68,7 @@ public class Controller {
 	 * @return the myNick
 	 */
 	public String getMyNick() {
-		return myNick;
-	}
-
-	/**
-	 * @param myNick the myNick to set
-	 */
-	public void setMyNick(String myNick) {
-		this.myNick = myNick;
+		return cl.getNick();
 	}
 
 	/**
@@ -92,15 +93,16 @@ public class Controller {
 		this.lServersActivos = lServersActivos;
 	}
 
-	public void connect() {
-
+	public void connect(Box b) {
+		cl.connectTCP(lServersActivos.get(0));
 		this.flag = true;
 
 	}
 
 	public boolean registaNick(String nick) {
-		return cl.registaNick(nick);
+		cl.registaNick(nick);
 
+		return true;
 	}
 
 	public void disconnect(Server ser) {
@@ -119,20 +121,29 @@ public class Controller {
 
 	public boolean testConnection(Server ser) {
 
-		Thread tr = new Thread(new Runnable() {
+		try {
+			b = cl.testaConexao(ser);
+		} catch (IOException ex) {
+			Logger.getLogger(Controller.class.getName()).
+				log(Level.SEVERE, null, ex);
+		}
 
-			@Override
-			public void run() {
-				try {
-					b = cl.testaConexao(ser);
-				} catch (IOException ex) {
-					Logger.getLogger(Controller.class.getName()).
-						log(Level.SEVERE, null, ex);
-				}
-			}
-		});
-		tr.start();
 		return b;
+	}
+
+	public List<String> importFile(String aFileName) {
+		Path path = Paths.get(aFileName);
+		try {
+			return Files.readAllLines(path, ENCODING);
+		} catch (IOException ex) {
+			Logger.getLogger(Controller.class.getName()).
+				log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
+
+	public void enviaMsg(String text) {
+		cl.enviaMsg(text);
 	}
 
 }

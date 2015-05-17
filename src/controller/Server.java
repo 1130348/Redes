@@ -30,6 +30,10 @@ public class Server {
 
 	}
 
+	public Server() {
+
+	}
+
 	/**
 	 * @return the nome
 	 */
@@ -121,6 +125,15 @@ public class Server {
 
 		return "(" + this.nome + ") " + this.ip.getHostAddress();
 
+	}
+
+	public boolean equals(Server ser) {
+
+		if (this.nome.equals(ser.nome) && this.ip.equals(ser.ip)) {
+			return true;
+		}
+
+		return false;
 	}
 
 }
