@@ -20,6 +20,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -46,14 +48,20 @@ class Client {
 
 	private Thread serverConn;
 
+	private List<Server> lServer;
+
+	public static Map<String, String> mapaNickIps;
+
 	public Client() {
 
 	}
 
 	public void registaNick(String nick) {
-		System.out.print("Nickname: ");
+
 		this.nick = nick;
-		System.out.println(nick);
+		this.frase = "\\changeNick " + nick;
+		enviaMsg(nick);
+
 	}
 
 	public boolean testaConexao(Server ser) throws SocketException, IOException {
@@ -132,21 +140,41 @@ class Client {
 					log(Level.SEVERE, null, ex);
 			}
 		}
-		frase = "(" + nick + ") " + frase;
-		System.out.println(frase);
+
 		data = frase.getBytes();
-		try {
-			sOut.write((byte) frase.length());
-		} catch (IOException ex) {
-			Logger.getLogger(Client.class.getName()).
-				log(Level.SEVERE, null, ex);
+
+		for (Server f : lServer) {
+
+			try {
+				sock = new Socket(f.getIp(), 27003);
+			} catch (IOException ex) {
+				String warn = IPdestino.getHostAddress();
+				JOptionPane.
+					showMessageDialog(null, "Server: " + warn + " deixou de estar disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
+				//tirar server da lista
+			}
+
+			try {
+				sOut = new DataOutputStream(sock.getOutputStream());
+			} catch (IOException ex) {
+				Logger.getLogger(Client.class.getName()).
+					log(Level.SEVERE, null, ex);
+			}
+
+			try {
+				sOut.write((byte) frase.length());
+			} catch (IOException ex) {
+				Logger.getLogger(Client.class.getName()).
+					log(Level.SEVERE, null, ex);
+			}
+			try {
+				sOut.write(data, 0, (byte) frase.length());
+			} catch (IOException ex) {
+				Logger.getLogger(Client.class.getName()).
+					log(Level.SEVERE, null, ex);
+			}
 		}
-		try {
-			sOut.write(data, 0, (byte) frase.length());
-		} catch (IOException ex) {
-			Logger.getLogger(Client.class.getName()).
-				log(Level.SEVERE, null, ex);
-		}
+
 		msgRecebida = false;
 
 		try {
@@ -159,6 +187,10 @@ class Client {
 		} catch (IOException ex) {
 			Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
+
+	public void setlServer(List<Server> lServersActivos) {
+		this.lServer = lServersActivos;
 	}
 
 }

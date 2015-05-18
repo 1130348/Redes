@@ -578,7 +578,6 @@ public class ListaServidores extends javax.swing.JFrame {
 	private void buttonAccao() {
 
 		if (valida(te.getText()) == true) {
-			controller.registaNick(te.getText());
 			Box b = new Box(ui, controller, checkSound.isSelected());
 			Thread tconnect = new Thread(new Runnable() {
 
@@ -588,6 +587,21 @@ public class ListaServidores extends javax.swing.JFrame {
 				}
 			});
 			tconnect.start();
+
+			Thread nThre = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(1000 * 1);
+					} catch (InterruptedException ex) {
+						Logger.getLogger(ListaServidores.class.getName()).
+							log(Level.SEVERE, null, ex);
+					}
+					controller.registaNick(te.getText());
+				}
+			});
+			nThre.start();
 
 		} else {
 

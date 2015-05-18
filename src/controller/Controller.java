@@ -91,6 +91,7 @@ public class Controller {
 	public void setlServersActivos(
 		List<Server> lServersActivos) {
 		this.lServersActivos = lServersActivos;
+		cl.setlServer(lServersActivos);
 	}
 
 	public void connect(Box b) {
