@@ -21,7 +21,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -50,8 +49,6 @@ class Client {
 
 	private List<Server> lServer;
 
-	public static Map<String, String> mapaNickIps;
-
 	public Client() {
 
 	}
@@ -60,7 +57,7 @@ class Client {
 
 		this.nick = nick;
 		this.frase = "\\changeNick " + nick;
-		enviaMsg(nick);
+		enviaMsg(frase);
 
 	}
 
