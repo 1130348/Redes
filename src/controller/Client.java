@@ -53,6 +53,7 @@ class Client {
 
 	public Client() {
 		lsocks = new ArrayList<>();
+		msgRecebida = false;
 	}
 
 	public void registaNick(String nick) {
@@ -92,7 +93,7 @@ class Client {
 	}
 
 	public void connectTCP() {
-
+		System.out.println(lServer.toString());
 		for (Server ser : lServer) {
 
 			IPdestino = ser.getIp();
@@ -119,34 +120,40 @@ class Client {
 
 			Thread serverConn = new Thread(new tcp_chat_cli_con(sock));
 			serverConn.start();
+			synchronized (this) {
+				while (true) {
+					try {
+						this.wait();
+					} catch (InterruptedException e) {
+						System.out.println("wait");
+					}
 
-			while (true) {
-				if (frase != null) {
+					if (msgRecebida) {
 
-					if (frase.compareTo("sair") == 0) {
+						if (frase.compareTo("sair") == 0) {
+							try {
+								sOut.write(0);
+							} catch (IOException ex) {
+								Logger.getLogger(Client.class.getName()).
+									log(Level.SEVERE, null, ex);
+							}
+							break;
+						}
+						data = frase.getBytes();
 						try {
-							sOut.write(0);
+							sOut.write((byte) frase.length());
 						} catch (IOException ex) {
 							Logger.getLogger(Client.class.getName()).
 								log(Level.SEVERE, null, ex);
 						}
-						break;
+						try {
+							sOut.write(data, 0, (byte) frase.length());
+						} catch (IOException ex) {
+							Logger.getLogger(Client.class.getName()).
+								log(Level.SEVERE, null, ex);
+						}
+						msgRecebida = false;
 					}
-					frase = "(" + nick + ") " + frase;
-					data = frase.getBytes();
-					try {
-						sOut.write((byte) frase.length());
-					} catch (IOException ex) {
-						Logger.getLogger(Client.class.getName()).
-							log(Level.SEVERE, null, ex);
-					}
-					try {
-						sOut.write(data, 0, (byte) frase.length());
-					} catch (IOException ex) {
-						Logger.getLogger(Client.class.getName()).
-							log(Level.SEVERE, null, ex);
-					}
-					frase = null;
 				}
 			}
 			try {
@@ -171,7 +178,12 @@ class Client {
 	}
 
 	public void enviaMsg(String text) {
-		frase = text;
+		synchronized (this) {
+			frase = text;
+			msgRecebida = true;
+			this.notifyAll();
+		}
+
 	}
 
 	public void setlServer(List<Server> lServersActivos) {
@@ -189,6 +201,7 @@ class tcp_chat_cli_con implements Runnable {
 		s = tcp_s;
 	}
 
+	@Override
 	public void run() {
 		int nChars;
 		byte[] data = new byte[300];
@@ -196,17 +209,23 @@ class tcp_chat_cli_con implements Runnable {
 
 		try {
 			sIn = new DataInputStream(s.getInputStream());
+
 			while (true) {
 				nChars = sIn.read();
-				if (nChars == 0) {
-					break;
+				if (nChars != 0) {
+
+					sIn.read(data, 0, nChars);
+					frase = new String(data, 0, nChars);
+					System.out.println(frase);
 				}
-				sIn.read(data, 0, nChars);
-				frase = new String(data, 0, nChars);
-				System.out.println(frase);
 			}
-		} catch (IOException ex) {
+
+		} catch (Exception ex) {
 			System.out.println("Ligacao TCP terminada.");
+			String warn = IPdestino.getHostAddress();
+			JOptionPane.
+				showMessageDialog(null, "Server: " + warn + " deixou de estar disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
+			//tirar server da lista
 		}
 	}
 }

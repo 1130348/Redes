@@ -72,33 +72,6 @@ class tcp_chat_srv_conn implements Runnable {
 		byte[] data = new byte[300];
 		try {
 
-//				String str = "";
-//				String nstr = "";
-//				int nickLeng = 0;
-//				try {
-//					str = new String(data, "UTF-8");
-//					if (str.contains("\\")) {
-//						executaComando(str);
-//
-//					} else {
-//						if (tcp_chat_srv.mapaNickIps.containsKey(getIp())) {
-//							/*nickLeng = tcp_chat_srv.mapaNickIps.get(getIp()).
-//							 length();*/
-//							String oldStr = str;
-//							str += tcp_chat_srv.mapaNickIps.
-//								get(getIp());
-//
-//							/*str = nstr.concat(tcp_chat_srv.mapaNickIps.
-//							 get(getIp()) + ": " + oldStr + '\0');*/
-//						}
-//					}
-//
-//					//System.out.println(tcp_chat_srv.mapaNickIps.values());
-//				} catch (Exception ex) {
-//					System.out.println(ex.toString());
-//				}
-//				data = str.getBytes();
-//				nChars = 11;
 			sIn = new DataInputStream(tcp_chat_srv.cliSock[myNum].
 				getInputStream());
 			while (true) {
@@ -107,6 +80,36 @@ class tcp_chat_srv_conn implements Runnable {
 					break; // linha vazia
 				}
 				sIn.read(data, 0, nChars);
+
+				String str = "";
+				String nstr = "";
+				int nickLeng = 0;
+				try {
+					str = new String(data, "UTF-8");
+					if (str.contains("\\")) {
+						str = executaComando(str);
+
+					} else {
+						if (tcp_chat_srv.mapaNickIps.containsKey(getIp())) {
+							/*nickLeng = tcp_chat_srv.mapaNickIps.get(getIp()).
+							 length();*/
+							String oldStr = str;
+							str += tcp_chat_srv.mapaNickIps.
+								get(getIp());
+
+							/*str = nstr.concat(tcp_chat_srv.mapaNickIps.
+							 get(getIp()) + ": " + oldStr + '\0');*/
+						}
+					}
+
+					//System.out.println(tcp_chat_srv.mapaNickIps.values());
+				} catch (Exception ex) {
+					System.out.println(ex.toString());
+				}
+
+				data = str.getBytes();
+				nChars = str.length();
+
 				tcp_chat_srv.changeLock.acquire();
 				for (i = 0; i < tcp_chat_srv.MAXCLI; i++) // retransmitir a linha
 				{
@@ -146,52 +149,31 @@ class tcp_chat_srv_conn implements Runnable {
 		return ls[0];
 	}
 
-	private void executaComando(String comando) {
-
+	private String executaComando(String comando) {
+		String rep = "";
 		System.out.println(comando);
 		String ip = getIp();
 		if (comando.contains("\\changeNick")) {
 			String[] ls2 = comando.split(" ");
 			boolean flag;
-			/*String[] n = (String[]) mapaNickIps.values().toArray();
-			 for (String f : n) {
-			 if(f.equals(nick)){
-			 flag=false;
-			 }else{
-			 flag=true;
-			 }
-			 }*/
-
-			//esteIp
-			int d;
-			/*for(d=0;d<sOut.length;d++){
-			 if(sOut[d].equals()){
-
-			 }
-
-			 }*/
-
-			/*if(!flag){
-			 /*if (tcp_chat_srv.inUse[i]) {
-			 String s = "\\nickNotAllowed";
-			 //data=s.getBytes();
-			 //tcp_chat_srv.sOut[i].write(nChars);
-			 //tcp_chat_srv.sOut[i].write(data, 0, nChars);
-			 }*/
-			/*}else{
-			 String s = "\\nickAllowed";
-			 //data=s.getBytes();
-			 //tcp_chat_srv.sOut[i].write(nChars);
-			 //tcp_chat_srv.sOut[i].write(data, 0, nChars);
-			 }*/
-			if (tcp_chat_srv.mapaNickIps.containsKey(ip)) {
-				tcp_chat_srv.mapaNickIps.put(ip, ls2[1]);
-			} else {
-				tcp_chat_srv.mapaNickIps.put(ip, ls2[1]);
+			String[] n = (String[]) tcp_chat_srv.mapaNickIps.values().toArray();
+			for (String f : n) {
+				if (f.equals(ls2[1])) {
+					rep = "\\nickNotAllowed";
+				} else {
+					rep = "\\nickAllowed";
+					if (tcp_chat_srv.mapaNickIps.containsKey(ip)) {
+						tcp_chat_srv.mapaNickIps.put(ip, ls2[1]);
+					} else {
+						tcp_chat_srv.mapaNickIps.put(ip, ls2[1]);
+					}
+				}
 			}
-		}
-		System.out.println(ip);
 
+			System.out.println(ip);
+
+		}
+		return rep;
 	}
 }
 
