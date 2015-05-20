@@ -7,6 +7,7 @@ package ui;
 
 import controller.Controller;
 import controller.Server;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -55,6 +56,8 @@ public class ListaServidores extends javax.swing.JFrame {
 
 	private JTextField te;
 
+	private JLabel f;
+
 	/**
 	 * Creates new form ListaServidores
 	 *
@@ -94,6 +97,13 @@ public class ListaServidores extends javax.swing.JFrame {
 	}
 
 	private void iniciaListas() {
+		jPanel2.setLayout(new BorderLayout());
+		f = new JLabel(new ImageIcon("LIB\\loading.gif"));
+		jPanel2.add(f);
+		f.setVisible(false);
+		jPanel2.updateUI();
+		jPanel2.setVisible(true);
+
 		boolean fl = true;
 		ls = new ArrayList();
 		ls2 = new ArrayList();
@@ -315,8 +325,10 @@ public class ListaServidores extends javax.swing.JFrame {
         jList2 = new javax.swing.JList();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Servidores");
 
         jList1.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -355,6 +367,17 @@ public class ListaServidores extends javax.swing.JFrame {
 
         jLabel2.setText("Servidores Adicionados");
 
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 44, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -364,7 +387,9 @@ public class ListaServidores extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1)
-                        .addGap(180, 180, 180)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(126, 126, 126)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(jProgressBar1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -376,7 +401,7 @@ public class ListaServidores extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel2)
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -392,13 +417,15 @@ public class ListaServidores extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(38, 38, 38)
+                .addGap(26, 26, 26)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addGap(20, 20, 20))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1)
+                        .addComponent(jButton2))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -417,8 +444,17 @@ public class ListaServidores extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
+		buttonValidar();
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+	private void buttonValidar() {
+
 		if (!ls2.isEmpty() && ls2.get(0) != "Vazio") {
 			controller.setlServersActivos(ls2);
+
+			f.setVisible(true);
+			jPanel2.updateUI();
 
 			jProgressBar1.setVisible(true);
 			jProgressBar1.setMaximum(100);
@@ -445,6 +481,24 @@ public class ListaServidores extends javax.swing.JFrame {
 								ls.add(ls2.get(k));
 								ls2.remove(k);
 							}
+
+							jProgressBar1.updateUI();
+							jList1.removeAll();
+							jList1.setListData(ls.toArray());
+							jList2.removeAll();
+							if (ls2.isEmpty()) {
+								ls2.add("Vazio");
+							}
+							jList2.setListData(ls2.toArray());
+							if (ls2.contains("Vazio")) {
+								jList2.setEnabled(false);
+							}
+
+							jList1.setEnabled(true);
+							jList1.updateUI();
+							jList2.updateUI();
+							jPanel1.updateUI();
+
 							String warn = tes.toString();
 							JOptionPane.
 								showMessageDialog(rootPane, "Server: " + warn + " não esta disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
@@ -453,30 +507,14 @@ public class ListaServidores extends javax.swing.JFrame {
 					}
 
 					controller.setlServersActivos(null);
-					break;
 				}
 
 				if (j == lt.size()) {
 					jButton2.setEnabled(true);
 				}
 			}
-
-			jProgressBar1.updateUI();
-			jList1.removeAll();
-			jList1.setListData(ls.toArray());
-			jList2.removeAll();
-			if (ls2.isEmpty()) {
-				ls2.add("Vazio");
-			}
-			jList2.setListData(ls2.toArray());
-			if (ls2.contains("Vazio")) {
-				jList2.setEnabled(false);
-			}
-
-			jList1.setEnabled(true);
-			jList1.updateUI();
-			jList2.updateUI();
-			jPanel1.updateUI();
+			f.setVisible(false);
+			jPanel2.updateUI();
 
 		} else {
 
@@ -485,7 +523,7 @@ public class ListaServidores extends javax.swing.JFrame {
 
 		}
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+	}
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
@@ -625,6 +663,7 @@ public class ListaServidores extends javax.swing.JFrame {
     private javax.swing.JList jList1;
     private javax.swing.JList jList2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

@@ -73,6 +73,8 @@ public class Box extends javax.swing.JFrame {
 
 	private boolean sound;
 
+	private String n;
+
 	public Box(UI ui, Controller controller, boolean sou) {
 		initComponents();
 		setLocationRelativeTo(null);
@@ -213,7 +215,6 @@ public class Box extends javax.swing.JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				String n;
 				String oldNick;
 				oldNick = controller.getMyNick();
 
@@ -227,7 +228,15 @@ public class Box extends javax.swing.JFrame {
 				} while (n.length() > 15 || n.length() == 0);
 
 				String sd[];
-				controller.registaNick(n);
+				Thread changeNick = new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						controller.registaNick(n);
+					}
+				});
+				changeNick.start();
+
 				sd = jTextPane1.getText().split("\n");
 				jTextPane1.setText("");
 				for (int i = 0; i < sd.length; i++) {
@@ -384,7 +393,7 @@ public class Box extends javax.swing.JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				controller.disconnect();
 				dispose();
 
 			}

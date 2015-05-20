@@ -95,7 +95,7 @@ public class Controller {
 	}
 
 	public void connect(Box b) {
-		cl.connectTCP(lServersActivos.get(0));
+		cl.connectTCP();
 		this.flag = true;
 
 	}
@@ -106,8 +106,8 @@ public class Controller {
 		return true;
 	}
 
-	public void disconnect(Server ser) {
-
+	public void disconnect() {
+		//cl.disconnectTCP();
 		this.flag = false;
 
 	}
