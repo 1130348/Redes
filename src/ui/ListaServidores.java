@@ -616,6 +616,7 @@ public class ListaServidores extends javax.swing.JFrame {
 	private void buttonAccao() {
 
 		if (valida(te.getText()) == true) {
+			controller.registaNick(te.getText());
 			Box b = new Box(ui, controller, checkSound.isSelected());
 			controller.setBox(b);
 			Thread tconnect = new Thread(new Runnable() {

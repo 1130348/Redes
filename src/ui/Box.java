@@ -855,7 +855,7 @@ public class Box extends javax.swing.JFrame {
 
 			try {
 				doc.
-					insertString(doc.getLength(), "ola", style);
+					insertString(doc.getLength(), ls[1], style);
 			} catch (Exception e) {
 				System.out.println("Erro insert UI");
 			}
@@ -865,11 +865,11 @@ public class Box extends javax.swing.JFrame {
 			if (new File("LIB\\systemTray").exists()) {
 				Notification n2;
 				if (!this.flag) {
-					n2 = new Notification(Box.this, "ola", "ola");
+					n2 = new Notification(Box.this, ls[0], ls[1]);
 					playNotification();
 					this.flag = true;
 				} else {
-					n2 = new Notification(Box.this, "ola", "ola");
+					n2 = new Notification(Box.this, ls[0], ls[1]);
 					playNotification();
 					this.flag = true;
 				}
