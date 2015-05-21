@@ -808,94 +808,75 @@ public class Box extends javax.swing.JFrame {
 			});
 			novaThread.start();
 
-			StyledDocument doc = jTextPane1.getStyledDocument();
-
-			Style style = jTextPane1.addStyle("I'm a Style", null);
-			StyleConstants.setForeground(style, Color.BLACK);
-
-			StyleConstants.setForeground(style, getColor());
-
-			try {
-				doc.
-					insertString(doc.getLength(), "\n" + controller.getMyNick() + ": ", style);
-			} catch (BadLocationException e) {
-			}
-
-			StyleConstants.setForeground(style, Color.BLACK);
-
-			try {
-				doc.
-					insertString(doc.getLength(), jTextField1.
-								 getText(), style);
-			} catch (BadLocationException e) {
-			}
-
-			jTextPane1.setDocument(doc);
-
-			jTextPane1.updateUI();
-
-			jTextField1.setText("");
-			jTextField1.updateUI();
 		}
 	}
 
 	public void recebeMensagem(String s) {
-		String ls[] = s.split("break");
-		StyledDocument doc = jTextPane1.getStyledDocument();
 
-		Style style = jTextPane1.addStyle("I'm a Style", null);
+		if (!s.contains("\\nick")) {
+			String ls[] = s.split("break");
+			StyledDocument doc = jTextPane1.getStyledDocument();
+			Style style = jTextPane1.addStyle("I'm a Style", null);
 
-		boolean fl = false;
-		for (int d = 0; d < lNicks.size(); d++) {
-			if (lNicks.get(d).equals(ls[0])) {
-				if (d > lc.size()) {
-					StyleConstants.setForeground(style, lc.get(d - lc.size()));
-				} else {
-					StyleConstants.setForeground(style, lc.get(d));
+			boolean fl = false;
+			for (int d = 0; d < lNicks.size(); d++) {
+				if (lNicks.get(d).equals(ls[0])) {
+					if (d > lc.size()) {
+						StyleConstants.setForeground(style, lc.
+													 get(d - lc.size()));
+					} else {
+						StyleConstants.setForeground(style, lc.get(d));
+					}
+					fl = true;
 				}
-				fl = true;
 			}
-		}
 
-		if (!fl) {
+			if (!fl) {
 
-			int n = lNicks.size();
-			System.out.println("Tamanho = " + n);
-			StyleConstants.setForeground(style, lc.get(n));
-			lNicks.add(ls[0]);
+				int ni = lNicks.size();
+				StyleConstants.setForeground(style, lc.get(ni));
+				lNicks.add(ls[0]);
+				System.out.println("Tamanho = " + ni);
 
-		}
-
-		try {
-			doc.
-				insertString(doc.getLength(), "\n" + ls[0] + ": ", style);
-		} catch (BadLocationException e) {
-		}
-
-		StyleConstants.setForeground(style, Color.BLACK);
-
-		try {
-			doc.
-				insertString(doc.getLength(), ls[1], style);
-		} catch (BadLocationException e) {
-		}
-
-		jTextPane1.setDocument(doc);
-
-		jTextPane1.updateUI();
-
-		if (new File("LIB\\systemTray").exists()) {
-			Notification n;
-			if (!this.flag) {
-				n = new Notification(Box.this, ls[0], ls[1]);
-				playNotification();
-				this.flag = true;
-			} else {
-				n = new Notification(Box.this, ls[0], ls[1]);
-				playNotification();
-				this.flag = true;
 			}
+
+			if (controller.getMyNick().equals(ls[0])) {
+				StyleConstants.setForeground(style, getColor());
+			}
+
+			try {
+				doc.
+					insertString(doc.getLength(), "\n" + ls[0] + ": ", style);
+			} catch (Exception e) {
+				System.out.println("Erro insert UI");
+			}
+
+			StyleConstants.setForeground(style, Color.BLACK);
+
+			try {
+				doc.
+					insertString(doc.getLength(), "ola", style);
+			} catch (Exception e) {
+				System.out.println("Erro insert UI");
+			}
+
+			jTextPane1.setDocument(doc);
+			//jTextPane1.updateUI();
+			if (new File("LIB\\systemTray").exists()) {
+				Notification n2;
+				if (!this.flag) {
+					n2 = new Notification(Box.this, "ola", "ola");
+					playNotification();
+					this.flag = true;
+				} else {
+					n2 = new Notification(Box.this, "ola", "ola");
+					playNotification();
+					this.flag = true;
+				}
+			}
+			jTextField1.setText("");
 		}
+
 	}
 
 	private void playNotification() {
@@ -1122,7 +1103,14 @@ public class Box extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void sair() {
+		Thread novaThread = new Thread(new Runnable() {
 
+			@Override
+			public void run() {
+				controller.enviaMsg("");
+			}
+		});
+		novaThread.start();
 		dispose();
 		this.ui.setEnabled(true);
 		this.ui.toFront();

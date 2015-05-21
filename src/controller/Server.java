@@ -31,6 +31,11 @@ public class Server {
 		this.nome = name;
 		this.ip = IP;
 
+		/*Map<String, String> mapaNickIps = new HashMap<>();
+		 String[] la = (String[]) mapaNickIps.values().toArray();
+		 for (String la1 : la) {
+
+		 }*/
 	}
 
 	public Server() {

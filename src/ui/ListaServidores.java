@@ -617,6 +617,7 @@ public class ListaServidores extends javax.swing.JFrame {
 
 		if (valida(te.getText()) == true) {
 			Box b = new Box(ui, controller, checkSound.isSelected());
+			controller.setBox(b);
 			Thread tconnect = new Thread(new Runnable() {
 
 				@Override

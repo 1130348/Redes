@@ -29,6 +29,8 @@ import javax.swing.JOptionPane;
 
 class Client {
 
+	static Controller controller;
+
 	static InetAddress IPdestino;
 
 	private static int TIMEOUT = 3;
@@ -51,9 +53,10 @@ class Client {
 
 	private List<Server> lServer;
 
-	public Client() {
+	public Client(Controller c) {
 		lsocks = new ArrayList<>();
 		msgRecebida = false;
+		controller = c;
 	}
 
 	public void registaNick(String nick) {
@@ -200,6 +203,7 @@ class tcp_chat_cli_con implements Runnable {
 
 	private Socket s;
 	private DataInputStream sIn;
+	private String frase;
 
 	public tcp_chat_cli_con(Socket tcp_s) {
 		s = tcp_s;
@@ -209,19 +213,23 @@ class tcp_chat_cli_con implements Runnable {
 	public void run() {
 		int nChars;
 		byte[] data = new byte[300];
-		String frase;
 
 		try {
 			sIn = new DataInputStream(s.getInputStream());
 
 			while (true) {
 				nChars = sIn.read();
-				if (nChars != 0) {
-
-					sIn.read(data, 0, nChars);
-					frase = new String(data, 0, nChars);
-					System.out.println(frase);
+				if (nChars == 0) {
+					break;
 				}
+
+				sIn.read(data, 0, nChars);
+				System.out.println(nChars);
+				frase = new String(data, 0, nChars);
+				System.out.println(frase);
+
+				Client.controller.recebeMsg(frase);
+
 			}
 
 		} catch (Exception ex) {
@@ -229,7 +237,7 @@ class tcp_chat_cli_con implements Runnable {
 			String warn = IPdestino.getHostAddress();
 			JOptionPane.
 				showMessageDialog(null, "Server: " + warn + " deixou de estar disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
-			//tirar server da lista
+			//tirar da lista
 		}
 	}
 }

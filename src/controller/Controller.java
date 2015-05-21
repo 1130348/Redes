@@ -37,13 +37,15 @@ public class Controller {
 
 	final Charset ENCODING = StandardCharsets.UTF_8;
 
+	private Box box;
+
 	public Controller() {
 
 		lServers = new ArrayList<>();
 		lServersActivos = new ArrayList<>();
 		flag = false;
 		try {
-			cl = new Client();
+			cl = new Client(this);
 		} catch (Exception ex) {
 			Logger.getLogger(Controller.class.getName()).
 				log(Level.SEVERE, null, ex);
@@ -145,6 +147,20 @@ public class Controller {
 
 	public void enviaMsg(String text) {
 		cl.enviaMsg(text);
+	}
+
+	public void recebeMsg(String text) {
+
+		box.recebeMensagem(text);
+
+	}
+
+	public void setBox(Box b) {
+		this.box = b;
+	}
+
+	public Box getBox() {
+		return this.box;
 	}
 
 }
