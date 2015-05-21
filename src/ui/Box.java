@@ -393,8 +393,8 @@ public class Box extends javax.swing.JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.disconnect();
-				dispose();
+
+				sair();
 
 			}
 		});
@@ -406,13 +406,9 @@ public class Box extends javax.swing.JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				escreveNick();
-				jTextPane1.setCaretPosition(getCaretPosicao());
-				ImageIcon im = new ImageIcon("LIB\\e1.png");
-				im.setDescription("e1");
-				jTextPane1.insertIcon(im);
-				jTextPane1.updateUI();
-				//send image
+
+				controller.enviaMsg("\\sendImage img1");
+
 			}
 		});
 
@@ -815,6 +811,64 @@ public class Box extends javax.swing.JFrame {
 
 		if (!s.contains("\\nick")) {
 			String ls[] = s.split("break");
+			if (s.contains("\\sendImage")) {
+				String ls2[] = ls[1].split(" ");
+
+				StyledDocument doc = jTextPane1.getStyledDocument();
+				Style style = jTextPane1.addStyle("I'm a Style", null);
+
+				boolean fl = false;
+				for (int d = 0; d < lNicks.size(); d++) {
+					if (lNicks.get(d).equals(ls[0])) {
+						if (d > lc.size()) {
+							StyleConstants.setForeground(style, lc.
+														 get(d - lc.size()));
+						} else {
+							StyleConstants.setForeground(style, lc.get(d));
+						}
+						fl = true;
+					}
+				}
+
+				if (!fl) {
+
+					int ni = lNicks.size();
+					StyleConstants.setForeground(style, lc.get(ni));
+					lNicks.add(ls[0]);
+					System.out.println("Tamanho = " + ni);
+
+				}
+
+				if (controller.getMyNick().equals(ls[0])) {
+					StyleConstants.setForeground(style, getColor());
+				}
+
+				try {
+					doc.
+						insertString(doc.getLength(), "\n" + ls[0] + ": ", style);
+				} catch (Exception e) {
+					System.out.println("Erro insert UI");
+				}
+
+				jTextPane1.setCaretPosition(getCaretPosicao());
+				ImageIcon im = null;
+				if (ls2[1].equals("img1")) {
+					im = new ImageIcon("LIB\\e1.png");
+					im.setDescription("e1");
+				} else if (ls2[1].equals("img2")) {
+					im = new ImageIcon("LIB\\e1.png");
+					im.setDescription("e2");
+				} else if (ls2[1].equals("img3")) {
+					im = new ImageIcon("LIB\\e1.png");
+					im.setDescription("e3");
+				} else {
+					im = new ImageIcon("LIB\\e1.png");
+					im.setDescription("e4");
+				}
+				jTextPane1.insertIcon(im);
+				jTextPane1.updateUI();
+			}
+
 			StyledDocument doc = jTextPane1.getStyledDocument();
 			Style style = jTextPane1.addStyle("I'm a Style", null);
 
@@ -1112,6 +1166,7 @@ public class Box extends javax.swing.JFrame {
 		});
 		novaThread.start();
 		dispose();
+		controller.disconnect();
 		this.ui.setEnabled(true);
 		this.ui.toFront();
 
