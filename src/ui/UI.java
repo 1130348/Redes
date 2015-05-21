@@ -44,7 +44,7 @@ public class UI extends JFrame {
 	 * @throws IOException
 	 */
 	public UI() throws IOException {
-		super("MULTICAST");
+		super("MULTICHAT");
 		this.controller = new Controller();
 
 		JMenuBar menuBar = new JMenuBar();
