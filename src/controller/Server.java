@@ -122,9 +122,11 @@ public class Server {
 
 	@Override
 	public String toString() {
-
-		return "(" + this.nome + ") " + this.ip.getHostAddress();
-
+		if (nome == null) {
+			return "(s/Dados) " + this.ip.getHostAddress();
+		} else {
+			return "(" + this.nome + ") " + this.ip.getHostAddress();
+		}
 	}
 
 	public boolean equals(Server ser) {
