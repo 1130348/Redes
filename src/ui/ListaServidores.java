@@ -631,7 +631,7 @@ public class ListaServidores extends javax.swing.JFrame {
 				@Override
 				public void run() {
 					try {
-						Thread.sleep(1000 * 5);
+						Thread.sleep(1000 * 1);
 					} catch (InterruptedException ex) {
 						Logger.getLogger(ListaServidores.class.getName()).
 							log(Level.SEVERE, null, ex);

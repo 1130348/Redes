@@ -6,6 +6,7 @@
 package controller;
 
 import java.net.InetAddress;
+import java.net.Socket;
 
 /**
  *
@@ -22,6 +23,8 @@ public class Server {
 	private boolean enviar;
 
 	private boolean receber;
+
+	private Socket sock;
 
 	public Server(String name, InetAddress IP) {
 
@@ -138,4 +141,11 @@ public class Server {
 		return false;
 	}
 
+	public void add(Socket sock) {
+		this.sock = sock;
+	}
+
+	public Socket getSocket() {
+		return this.sock;
+	}
 }

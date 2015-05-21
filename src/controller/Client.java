@@ -101,45 +101,48 @@ class Client {
 
 			try {
 				sock = new Socket(IPdestino, 27003);
-				lsocks.add(sock);
+				ser.add(sock);
 			} catch (IOException ex) {
 				String warn = IPdestino.getHostAddress();
 				JOptionPane.
 					showMessageDialog(null, "Server: " + warn + " deixou de estar disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
 				//tirar server da lista
 			}
-
-			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-			sOut = null;
-			try {
-				sOut = new DataOutputStream(sock.getOutputStream());
-			} catch (IOException ex) {
-				Logger.getLogger(Client.class.getName()).
-					log(Level.SEVERE, null, ex);
-			}
-
 			Thread serverConn = new Thread(new tcp_chat_cli_con(sock));
 			serverConn.start();
-			synchronized (this) {
-				while (true) {
-					try {
-						this.wait();
-					} catch (InterruptedException e) {
-						System.out.println("wait");
-					}
+		}
 
-					if (msgRecebida) {
+		synchronized (this) {
+			while (true) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+					System.out.println("wait");
+				}
 
-						if (frase.compareTo("sair") == 0) {
-							try {
-								sOut.write(0);
-							} catch (IOException ex) {
-								Logger.getLogger(Client.class.getName()).
-									log(Level.SEVERE, null, ex);
-							}
-							break;
+				if (msgRecebida) {
+
+					if (frase.compareTo("sair") == 0) {
+						try {
+							sOut.write(0);
+						} catch (IOException ex) {
+							Logger.getLogger(Client.class.getName()).
+								log(Level.SEVERE, null, ex);
 						}
-						data = frase.getBytes();
+						break;
+					}
+					data = frase.getBytes();
+
+					for (Server serv : lServer) {
+
+						sOut = null;
+						try {
+							sOut = new DataOutputStream(serv.getSocket().
+								getOutputStream());
+						} catch (IOException ex) {
+							Logger.getLogger(Client.class.getName()).
+								log(Level.SEVERE, null, ex);
+						}
 						try {
 							sOut.write((byte) frase.length());
 						} catch (IOException ex) {
@@ -152,8 +155,8 @@ class Client {
 							Logger.getLogger(Client.class.getName()).
 								log(Level.SEVERE, null, ex);
 						}
-						msgRecebida = false;
 					}
+					msgRecebida = false;
 				}
 			}
 			try {
@@ -188,6 +191,7 @@ class Client {
 
 	public void setlServer(List<Server> lServersActivos) {
 		this.lServer = lServersActivos;
+
 	}
 
 }
