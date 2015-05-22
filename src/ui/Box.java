@@ -420,10 +420,7 @@ public class Box extends javax.swing.JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				escreveNick();
-				jTextPane1.setCaretPosition(getCaretPosicao());
-				jTextPane1.insertIcon(new ImageIcon("LIB\\e2.png"));
-				jTextPane1.updateUI();
+				controller.enviaMsg("\\sendImage img2");
 			}
 		});
 
@@ -435,10 +432,7 @@ public class Box extends javax.swing.JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				escreveNick();
-				jTextPane1.setCaretPosition(getCaretPosicao());
-				jTextPane1.insertIcon(new ImageIcon("LIB\\e3.png"));
-				jTextPane1.updateUI();
+				controller.enviaMsg("\\sendImage img3");
 			}
 		});
 
@@ -450,10 +444,7 @@ public class Box extends javax.swing.JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				escreveNick();
-				jTextPane1.setCaretPosition(getCaretPosicao());
-				jTextPane1.insertIcon(new ImageIcon("LIB\\e4.png"));
-				jTextPane1.updateUI();
+				controller.enviaMsg("\\sendImage img4");
 			}
 		});
 
@@ -855,19 +846,19 @@ public class Box extends javax.swing.JFrame {
 					im = new ImageIcon("LIB\\e1.png");
 					im.setDescription("e1");
 				} else if (ls2[1].equals("img2")) {
-					im = new ImageIcon("LIB\\e1.png");
+					im = new ImageIcon("LIB\\e2.png");
 					im.setDescription("e2");
 				} else if (ls2[1].equals("img3")) {
-					im = new ImageIcon("LIB\\e1.png");
+					im = new ImageIcon("LIB\\e3.png");
 					im.setDescription("e3");
 				} else {
-					im = new ImageIcon("LIB\\e1.png");
+					im = new ImageIcon("LIB\\e4.png");
 					im.setDescription("e4");
 				}
 				setCaretPosicao(doc.getLength());
 				jTextPane1.setCaretPosition(getCaretPosicao());
 				jTextPane1.insertIcon(im);
-				jTextPane1.updateUI();
+				//jTextPane1.updateUI();
 			} else {
 
 				StyledDocument doc = jTextPane1.getStyledDocument();
