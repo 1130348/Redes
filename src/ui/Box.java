@@ -850,7 +850,6 @@ public class Box extends javax.swing.JFrame {
 					System.out.println("Erro insert UI");
 				}
 
-				jTextPane1.setCaretPosition(getCaretPosicao());
 				ImageIcon im = null;
 				if (ls2[1].equals("img1")) {
 					im = new ImageIcon("LIB\\e1.png");
@@ -865,70 +864,73 @@ public class Box extends javax.swing.JFrame {
 					im = new ImageIcon("LIB\\e1.png");
 					im.setDescription("e4");
 				}
+				setCaretPosicao(doc.getLength());
+				jTextPane1.setCaretPosition(getCaretPosicao());
 				jTextPane1.insertIcon(im);
 				jTextPane1.updateUI();
-			}
+			} else {
 
-			StyledDocument doc = jTextPane1.getStyledDocument();
-			Style style = jTextPane1.addStyle("I'm a Style", null);
+				StyledDocument doc = jTextPane1.getStyledDocument();
+				Style style = jTextPane1.addStyle("I'm a Style", null);
 
-			boolean fl = false;
-			for (int d = 0; d < lNicks.size(); d++) {
-				if (lNicks.get(d).equals(ls[0])) {
-					if (d > lc.size()) {
-						StyleConstants.setForeground(style, lc.
-													 get(d - lc.size()));
-					} else {
-						StyleConstants.setForeground(style, lc.get(d));
+				boolean fl = false;
+				for (int d = 0; d < lNicks.size(); d++) {
+					if (lNicks.get(d).equals(ls[0])) {
+						if (d > lc.size()) {
+							StyleConstants.setForeground(style, lc.
+														 get(d - lc.size()));
+						} else {
+							StyleConstants.setForeground(style, lc.get(d));
+						}
+						fl = true;
 					}
-					fl = true;
 				}
-			}
 
-			if (!fl) {
+				if (!fl) {
 
-				int ni = lNicks.size();
-				StyleConstants.setForeground(style, lc.get(ni));
-				lNicks.add(ls[0]);
-				System.out.println("Tamanho = " + ni);
+					int ni = lNicks.size();
+					StyleConstants.setForeground(style, lc.get(ni));
+					lNicks.add(ls[0]);
+					System.out.println("Tamanho = " + ni);
 
-			}
-
-			if (controller.getMyNick().equals(ls[0])) {
-				StyleConstants.setForeground(style, getColor());
-			}
-
-			try {
-				doc.
-					insertString(doc.getLength(), "\n" + ls[0] + ": ", style);
-			} catch (Exception e) {
-				System.out.println("Erro insert UI");
-			}
-
-			StyleConstants.setForeground(style, Color.BLACK);
-
-			try {
-				doc.
-					insertString(doc.getLength(), ls[1], style);
-			} catch (Exception e) {
-				System.out.println("Erro insert UI");
-			}
-
-			jTextPane1.setDocument(doc);
-			//jTextPane1.updateUI();
-			if (new File("LIB\\systemTray").exists()) {
-				Notification n2;
-				if (!this.flag) {
-					n2 = new Notification(Box.this, ls[0], ls[1]);
-					playNotification();
-					this.flag = true;
-				} else {
-					n2 = new Notification(Box.this, ls[0], ls[1]);
-					playNotification();
-					this.flag = true;
 				}
+
+				if (controller.getMyNick().equals(ls[0])) {
+					StyleConstants.setForeground(style, getColor());
+				}
+
+				try {
+					doc.
+						insertString(doc.getLength(), "\n" + ls[0] + ": ", style);
+				} catch (Exception e) {
+					System.out.println("Erro insert UI");
+				}
+
+				StyleConstants.setForeground(style, Color.BLACK);
+
+				try {
+					doc.
+						insertString(doc.getLength(), ls[1], style);
+				} catch (Exception e) {
+					System.out.println("Erro insert UI");
+				}
+
+				jTextPane1.setDocument(doc);
+				//jTextPane1.updateUI();
+				if (new File("LIB\\systemTray").exists()) {
+					Notification n2;
+					if (!this.flag) {
+						n2 = new Notification(Box.this, ls[0], ls[1]);
+						playNotification();
+						this.flag = true;
+					} else {
+						n2 = new Notification(Box.this, ls[0], ls[1]);
+						playNotification();
+						this.flag = true;
+					}
+				}
+				jTextField1.setText("");
 			}
-			jTextField1.setText("");
 		}
 
 	}
