@@ -227,8 +227,13 @@ class tcp_chat_cli_con implements Runnable {
 				System.out.println(nChars);
 				frase = new String(data, 0, nChars);
 				System.out.println(frase);
-
-				Client.controller.recebeMsg(frase);
+				if (frase.contains("\\nickChanged")) {
+					Client.controller.setNickRegisted(true);
+				} else if (frase.contains("\\nickRegisted")) {
+					Client.controller.setNickRegisted(false);
+				} else {
+					Client.controller.recebeMsg(frase);
+				}
 
 			}
 

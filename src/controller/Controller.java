@@ -39,11 +39,14 @@ public class Controller {
 
 	private Box box;
 
+	private boolean nickRegisted;
+
 	public Controller() {
 
 		lServers = new ArrayList<>();
 		lServersActivos = new ArrayList<>();
 		flag = false;
+		nickRegisted = false;
 		try {
 			cl = new Client(this);
 		} catch (Exception ex) {
@@ -161,6 +164,20 @@ public class Controller {
 
 	public Box getBox() {
 		return this.box;
+	}
+
+	/**
+	 * @return the nickRegisted
+	 */
+	public boolean isNickRegisted() {
+		return nickRegisted;
+	}
+
+	/**
+	 * @param nickRegisted the nickRegisted to set
+	 */
+	public void setNickRegisted(boolean nickRegisted) {
+		this.nickRegisted = nickRegisted;
 	}
 
 }

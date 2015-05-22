@@ -617,16 +617,6 @@ public class ListaServidores extends javax.swing.JFrame {
 
 		if (valida(te.getText()) == true) {
 			controller.registaNick(te.getText());
-			Box b = new Box(ui, controller, checkSound.isSelected());
-			controller.setBox(b);
-			Thread tconnect = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					controller.connect(b);
-				}
-			});
-			tconnect.start();
 
 			Thread nThre = new Thread(new Runnable() {
 
@@ -638,7 +628,16 @@ public class ListaServidores extends javax.swing.JFrame {
 						Logger.getLogger(ListaServidores.class.getName()).
 							log(Level.SEVERE, null, ex);
 					}
-					controller.registaNick(te.getText());
+					if (controller.isNickRegisted()) {
+						Box b = new Box(ui, controller, checkSound.isSelected());
+						controller.setBox(b);
+						controller.connect(b);
+					} else {
+						te.setText("");
+						JOptionPane.
+							showMessageDialog(rootPane, "O seu Nickname já se encontra registado!", "Erro", JOptionPane.INFORMATION_MESSAGE);
+					}
+
 				}
 			});
 			nThre.start();
