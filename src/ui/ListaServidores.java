@@ -66,7 +66,7 @@ public class ListaServidores extends javax.swing.JFrame {
 	 */
 	public ListaServidores(UI ui, Controller controller) {
 
-		List<Server> ls = new ArrayList<>();
+		List<Server> lsInic = new ArrayList<>();
 
 		List<String> lIP = controller.importFile("teste.txt");
 		for (String lIP1 : lIP) {
@@ -77,10 +77,10 @@ public class ListaServidores extends javax.swing.JFrame {
 				Logger.getLogger(ListaServidores.class.getName()).
 					log(Level.SEVERE, null, ex);
 			}
-			ls.add(s1);
+			lsInic.add(s1);
 		}
 
-		controller.setlServers(ls);
+		controller.setlServers(lsInic);
 
 		initComponents();
 		this.ui = ui;
