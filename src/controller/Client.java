@@ -137,7 +137,6 @@ class Client {
 					data = frase.getBytes();
 
 					for (Server serv : lServer) {
-
 						sOut = null;
 						try {
 							sOut = new DataOutputStream(serv.getSocket().
@@ -229,8 +228,10 @@ class tcp_chat_cli_con implements Runnable {
 				System.out.println(frase);
 				if (frase.contains("\\nickChanged")) {
 					Client.controller.setNickRegisted(true);
-				} else if (frase.contains("\\nickRegisted")) {
+					Client.controller.setFlag(true);
+				} else if (frase.contains("\\nickNotAllowed")) {
 					Client.controller.setNickRegisted(false);
+					Client.controller.setFlag(false);
 				} else {
 					Client.controller.recebeMsg(frase);
 				}

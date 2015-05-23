@@ -99,9 +99,15 @@ public class Controller {
 		cl.setlServer(lServersActivos);
 	}
 
-	public void connect(Box b) {
-		cl.connectTCP();
-		this.flag = true;
+	public void connect() {
+		Thread tt = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				cl.connectTCP();
+			}
+		});
+		tt.start();
 
 	}
 
@@ -178,6 +184,10 @@ public class Controller {
 	 */
 	public void setNickRegisted(boolean nickRegisted) {
 		this.nickRegisted = nickRegisted;
+	}
+
+	public void setFlag(boolean b) {
+		this.flag = b;
 	}
 
 }

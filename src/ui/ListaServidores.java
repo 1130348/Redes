@@ -459,18 +459,21 @@ public class ListaServidores extends javax.swing.JFrame {
 			jProgressBar1.setVisible(true);
 			jProgressBar1.setMaximum(100);
 			jProgressBar1.setMinimum(0);
+
 			List<Server> lt = controller.getlServersActivos();
+			List<Server> lt2 = controller.getlServersActivos();
+			int tmn = lt.size();
 			for (int j = 1; j <= lt.size(); j++) {
-				if (controller.testConnection(lt.get(j - 1))) {
-					jProgressBar1.setValue(j * ((100 / lt.size()) + (100 % lt.
-						size())));
+
+				if (controller.testConnection(lt2.get(j - 1))) {
+					jProgressBar1.setValue(j * ((100 / tmn) + (100 % tmn)));
 
 				} else {
 					jProgressBar1.setValue(0);
 					jProgressBar1.setVisible(false);
 					jButton2.setEnabled(false);
 
-					Server tes = lt.get(j - 1);
+					Server tes = lt2.get(j - 1);
 					for (int k = 0; k < ls2.size(); k++) {
 						if (ls2.get(k).equals(tes)) {
 							if (ls.contains("Vazio")) {
@@ -507,11 +510,12 @@ public class ListaServidores extends javax.swing.JFrame {
 					}
 
 					controller.setlServersActivos(null);
+
 				}
 
-				if (j == lt.size()) {
-					jButton2.setEnabled(true);
-				}
+			}
+			if (!ls2.contains("Vazio")) {
+				jButton2.setEnabled(true);
 			}
 			f.setVisible(false);
 			jPanel2.updateUI();
@@ -616,7 +620,33 @@ public class ListaServidores extends javax.swing.JFrame {
 	private void buttonAccao() {
 
 		if (valida(te.getText()) == true) {
-			controller.registaNick(te.getText());
+
+			System.out.println(controller.isFlag());
+
+			if (controller.isFlag() == false) {
+				controller.connect();
+			}
+
+			Thread ver = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(1000 * 1);
+					} catch (InterruptedException ex) {
+						Logger.getLogger(ListaServidores.class.getName()).
+							log(Level.SEVERE, null, ex);
+					}
+					controller.registaNick(te.getText());
+				}
+			});
+			ver.start();
+			try {
+				ver.join();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(ListaServidores.class.getName()).
+					log(Level.SEVERE, null, ex);
+			}
 
 			Thread nThre = new Thread(new Runnable() {
 
@@ -628,10 +658,11 @@ public class ListaServidores extends javax.swing.JFrame {
 						Logger.getLogger(ListaServidores.class.getName()).
 							log(Level.SEVERE, null, ex);
 					}
+
 					if (controller.isNickRegisted()) {
 						Box b = new Box(ui, controller, checkSound.isSelected());
 						controller.setBox(b);
-						controller.connect(b);
+
 					} else {
 						te.setText("");
 						JOptionPane.
