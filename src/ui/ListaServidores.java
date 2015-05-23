@@ -463,27 +463,26 @@ public class ListaServidores extends javax.swing.JFrame {
 			List<Server> lt = controller.getlServersActivos();
 			List<Server> lt2 = controller.getlServersActivos();
 			int tmn = lt.size();
-                        boolean todosConectados = false;
-                        if(lt.size()>0){
-                            todosConectados=true;
-                        }
+			boolean todosConectados = false;
+			if (lt.size() > 0) {
+				todosConectados = true;
+			}
 			for (int j = 1; j <= lt.size(); j++) {
-                                if(lt2.contains("Vazio"))
-                                {
-                                     break; 
-                                }
+				if (lt2.contains("Vazio")) {
+					break;
+				}
 				if (controller.testConnection(lt2.get(j - 1))) {
 					//jProgressBar1.setValue(j * ((100 / tmn) + (100 % tmn)));
-                                           jProgressBar1.setValue(100/tmn+jProgressBar1.getValue());
-                                           jProgressBar1.updateUI();
-                                           String warn = lt2.get(j-1).toString();
-                                           JOptionPane.
-								showMessageDialog(rootPane, "Server: " + warn + " esta disponível! ", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+					jProgressBar1.setValue(100 / tmn + jProgressBar1.getValue());
+					jProgressBar1.updateUI();
+					String warn = lt2.get(j - 1).toString();
+					JOptionPane.
+						showMessageDialog(rootPane, "Server: " + warn + " esta disponível! ", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
-                                        j++;
-                                        
+					j++;
+
 				} else {
-                                        todosConectados=false;
+					todosConectados = false;
 					//jProgressBar1.setValue(0);
 					//jProgressBar1.setVisible(false);
 					jButton2.setEnabled(false);
@@ -527,17 +526,14 @@ public class ListaServidores extends javax.swing.JFrame {
 					controller.setlServersActivos(null);
 
 				}
-                            j--;
+				j--;
 			}
-                        /**
-			if (!ls2.contains("Vazio")) {
+			/**
+			 * if (!ls2.contains("Vazio")) { jButton2.setEnabled(true); } *
+			 */
+			if (todosConectados == true) {
 				jButton2.setEnabled(true);
 			}
-                        * **/
-                        if(todosConectados==true)
-                        {
-                            jButton2.setEnabled(true);
-                        }
 			f.setVisible(false);
 			jPanel2.updateUI();
 
@@ -658,6 +654,7 @@ public class ListaServidores extends javax.swing.JFrame {
 						Logger.getLogger(ListaServidores.class.getName()).
 							log(Level.SEVERE, null, ex);
 					}
+
 					controller.registaNick(te.getText());
 				}
 			});
@@ -674,7 +671,7 @@ public class ListaServidores extends javax.swing.JFrame {
 				@Override
 				public void run() {
 					try {
-						Thread.sleep(1000 * 1);
+						Thread.sleep(1000 * 3);
 					} catch (InterruptedException ex) {
 						Logger.getLogger(ListaServidores.class.getName()).
 							log(Level.SEVERE, null, ex);

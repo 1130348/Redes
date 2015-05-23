@@ -1170,7 +1170,7 @@ public class Box extends javax.swing.JFrame {
 
 			@Override
 			public void run() {
-				controller.enviaMsg("");
+				controller.enviaMsg("\\Sair");
 			}
 		});
 		novaThread.start();
@@ -1186,7 +1186,7 @@ public class Box extends javax.swing.JFrame {
 
 			@Override
 			public void run() {
-				controller.enviaMsg("");
+				controller.enviaMsg("\\Sair");
 			}
 		});
 		novaThread.start();

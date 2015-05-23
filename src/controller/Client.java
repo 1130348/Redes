@@ -39,7 +39,7 @@ class Client {
 
 	static Socket sock;
 
-	private boolean msgRecebida;
+	private boolean msgEnviada;
 
 	private DataOutputStream sOut;
 
@@ -55,7 +55,7 @@ class Client {
 
 	public Client(Controller c) {
 		lsocks = new ArrayList<>();
-		msgRecebida = false;
+		msgEnviada = false;
 		controller = c;
 	}
 
@@ -123,7 +123,7 @@ class Client {
 					System.out.println("wait");
 				}
 
-				if (msgRecebida) {
+				if (msgEnviada) {
 
 					if (frase.compareTo("sair") == 0) {
 						try {
@@ -158,7 +158,7 @@ class Client {
 								log(Level.SEVERE, null, ex);
 						}
 					}
-					msgRecebida = false;
+					msgEnviada = false;
 				}
 			}
 			try {
@@ -185,7 +185,7 @@ class Client {
 	public void enviaMsg(String text) {
 		synchronized (this) {
 			frase = text;
-			msgRecebida = true;
+			msgEnviada = true;
 			this.notifyAll();
 		}
 
@@ -203,9 +203,11 @@ class tcp_chat_cli_con implements Runnable {
 	private Socket s;
 	private DataInputStream sIn;
 	private String frase;
+	private boolean msgRecebida;
 
 	public tcp_chat_cli_con(Socket tcp_s) {
 		s = tcp_s;
+		msgRecebida = true;
 	}
 
 	@Override
@@ -217,15 +219,20 @@ class tcp_chat_cli_con implements Runnable {
 			sIn = new DataInputStream(s.getInputStream());
 
 			while (true) {
+				while (!msgRecebida) {
+
+				}
 				nChars = sIn.read();
 				if (nChars == 0) {
 					break;
 				}
 
 				sIn.read(data, 0, nChars);
+				msgRecebida = false;
 				System.out.println(nChars);
 				frase = new String(data, 0, nChars);
-				System.out.println(frase);
+				System.out.println("12 " + frase);
+
 				if (frase.contains("\\nickChanged")) {
 					Client.controller.setNickRegisted(true);
 					Client.controller.setFlag(false);
@@ -235,9 +242,9 @@ class tcp_chat_cli_con implements Runnable {
 				} else {
 					Client.controller.recebeMsg(frase);
 				}
+				msgRecebida = true;
 
 			}
-
 		} catch (IOException ex) {
 			System.out.println("Ligacao TCP terminada.");
 			String warn = IPdestino.getHostAddress();
