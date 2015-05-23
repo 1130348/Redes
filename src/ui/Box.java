@@ -75,7 +75,10 @@ public class Box extends javax.swing.JFrame {
 
 	private String n;
 
+	private String nameFicheiro;
+
 	public Box(UI ui, Controller controller, boolean sou) {
+		nameFicheiro = "";
 		initComponents();
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -539,94 +542,107 @@ public class Box extends javax.swing.JFrame {
 
 		if (SystemTray.isSupported()) {
 			// get the SystemTray instance
-			if (new File("LIB\\systemTray").exists()) {
-				System.out.println("SystemTrayActive");
-			} else {
-				File f = new File("LIB\\systemTray");
-				System.out.println("Criou systemTray");
-				try {
-					f.createNewFile();
-				} catch (IOException ex) {
-					Logger.getLogger(Box.class.getName()).
-						log(Level.SEVERE, null, ex);
-				}
-				SystemTray tray = SystemTray.getSystemTray();
-				// load an image
-				Image image = Toolkit.getDefaultToolkit().
-					getImage("LIB\\logo.png");
-				// create a action listener to listen for default action executed on the tray icon
-				ActionListener listener = new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						java.awt.Window win[] = java.awt.Window.getWindows();
-						for (int i = 0; i < win.length; i++) {
-							win[i].dispose();
-						}
-						tray.remove(trayIcone);
-						f.delete();
-						System.exit(0);
-					}
 
-				};
-
-				// create a popup menu
-				PopupMenu popup = new PopupMenu();
-				// create menu item for the default action
-				MenuItem exitProgram = new MenuItem("Sair");
-				PopupMenu soundOpt = new PopupMenu("Som");
-				exitProgram.addActionListener(listener);
-				MenuItem onOff = new MenuItem();
-				if (sound) {
-					onOff.setLabel("Off");
+			boolean flagFile = true;
+			int cont = 1;
+			String nameFile = "LIB\\systemTray";
+			File f = null;
+			while (flagFile) {
+				if (new File(nameFile).exists()) {
+					nameFile += cont;
 				} else {
-					onOff.setLabel("On");
+					f = new File(nameFile);
+					System.out.println("Criou systemTray");
+					try {
+						f.createNewFile();
+					} catch (IOException ex) {
+						Logger.getLogger(Box.class.getName()).
+							log(Level.SEVERE, null, ex);
+					}
+					flagFile = false;
+					setNameFile(nameFile);
+				}
+				cont++;
+			}
+
+			SystemTray tray = SystemTray.getSystemTray();
+			// load an image
+			Image image = Toolkit.getDefaultToolkit().
+				getImage("LIB\\logo.png");
+			// create a action listener to listen for default action executed on the tray icon
+			ActionListener listener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					java.awt.Window win[] = java.awt.Window.getWindows();
+					for (int i = 0; i < win.length; i++) {
+						win[i].dispose();
+					}
+					tray.remove(trayIcone);
+					File f = new File(getNameFile());
+					f.delete();
+					sairFromTray();
 				}
 
-				onOff.addActionListener(new ActionListener() {
+			};
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
+			// create a popup menu
+			PopupMenu popup = new PopupMenu();
+			// create menu item for the default action
+			MenuItem exitProgram = new MenuItem("Sair");
+			PopupMenu soundOpt = new PopupMenu("Som");
+			exitProgram.addActionListener(listener);
+			MenuItem onOff = new MenuItem();
+			if (sound) {
+				onOff.setLabel("Off");
+			} else {
+				onOff.setLabel("On");
+			}
 
-						if (onOff.getLabel().equals("Off")) {
-							sound = false;
-							onOff.setLabel("On");
-						} else {
-							sound = true;
-							onOff.setLabel("Off");
-						}
+			onOff.addActionListener(new ActionListener() {
 
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					if (onOff.getLabel().equals("Off")) {
+						sound = false;
+						onOff.setLabel("On");
+					} else {
+						sound = true;
+						onOff.setLabel("Off");
 					}
-				});
 
-				soundOpt.add(onOff);
-				popup.add(soundOpt);
-				popup.add(exitProgram);
-
-				/// ... add other items
-				// construct a TrayIcon
-				trayIcone = new TrayIcon(image, "MULTICHAT", popup);
-				// set the TrayIcon properties
-				trayIcone.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						Box.this.setState(Frame.NORMAL);
-						ui.setState(Frame.NORMAL);
-						ui.setVisible(true);
-						ui.toFront();
-						Box.this.setVisible(true);
-						Box.this.toFront();
-						tray.remove(trayIcone);
-						f.delete();
-
-					}
-				});
-
-				try {
-					tray.add(trayIcone);
-				} catch (AWTException e) {
-					System.err.println(e);
 				}
+			});
+
+			soundOpt.add(onOff);
+			popup.add(soundOpt);
+			popup.add(exitProgram);
+
+			/// ... add other items
+			// construct a TrayIcon
+			trayIcone = new TrayIcon(image, "MULTICHAT", popup);
+			// set the TrayIcon properties
+			trayIcone.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Box.this.setState(Frame.NORMAL);
+					ui.setState(Frame.NORMAL);
+					ui.setVisible(true);
+					ui.toFront();
+					Box.this.setVisible(true);
+					Box.this.toFront();
+					tray.remove(trayIcone);
+					File f = new File(getNameFile());
+					f.delete();
+
+				}
+			});
+
+			try {
+				tray.add(trayIcone);
+			} catch (AWTException e) {
+				System.err.println(e);
 			}
 		}
 
@@ -908,7 +924,7 @@ public class Box extends javax.swing.JFrame {
 
 				jTextPane1.setDocument(doc);
 				//jTextPane1.updateUI();
-				if (new File("LIB\\systemTray").exists()) {
+				if (new File(getNameFile()).exists()) {
 					Notification n2;
 					if (!this.flag) {
 						n2 = new Notification(Box.this, ls[0], ls[1]);
@@ -1165,6 +1181,18 @@ public class Box extends javax.swing.JFrame {
 
 	}
 
+	private void sairFromTray() {
+		Thread novaThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				controller.enviaMsg("");
+			}
+		});
+		novaThread.start();
+
+	}
+
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 		// TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -1209,4 +1237,12 @@ public class Box extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
+
+	private String getNameFile() {
+		return this.nameFicheiro;
+	}
+
+	private void setNameFile(String nameFile) {
+		this.nameFicheiro = nameFile;
+	}
 }

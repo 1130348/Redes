@@ -228,17 +228,17 @@ class tcp_chat_cli_con implements Runnable {
 				System.out.println(frase);
 				if (frase.contains("\\nickChanged")) {
 					Client.controller.setNickRegisted(true);
-					Client.controller.setFlag(true);
+					Client.controller.setFlag(false);
 				} else if (frase.contains("\\nickNotAllowed")) {
 					Client.controller.setNickRegisted(false);
-					Client.controller.setFlag(false);
+					Client.controller.setFlag(true);
 				} else {
 					Client.controller.recebeMsg(frase);
 				}
 
 			}
 
-		} catch (Exception ex) {
+		} catch (IOException ex) {
 			System.out.println("Ligacao TCP terminada.");
 			String warn = IPdestino.getHostAddress();
 			JOptionPane.
