@@ -696,8 +696,8 @@ public class ListaServidores extends javax.swing.JFrame {
 						te.setText("");
 						controller.setNickRegisted(true);
 						controller.setFlag(true);
-						//testar controller.enviaMsg("\\Sair");
-						//controller.disconnect();
+						controller.enviaMsg("\\Sair");
+						controller.disconnect();
 						JOptionPane.
 							showMessageDialog(rootPane, "O seu Nickname já se encontra registado!", "Erro", JOptionPane.INFORMATION_MESSAGE);
 					}
