@@ -172,9 +172,9 @@ public class Controller {
 
 	}
 
-	public void recebeMsg(String text, String ip) {
+	public void recebeMsg(String text, String namesrv, String ip) {
 
-		box.recebeMensagem(text, ip);
+		box.recebeMensagem(text, namesrv, ip);
 
 	}
 

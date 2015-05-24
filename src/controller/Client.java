@@ -296,6 +296,7 @@ class tcp_chat_cli_con implements Runnable {
 	@Override
 	public void run() {
 		int nChars;
+                Server srv=new Server();
 		byte[] data = new byte[300];
 
 		try {
@@ -320,7 +321,7 @@ class tcp_chat_cli_con implements Runnable {
 					}
 					for (Server e : Client.lServerConnected) {
 						if (e.getSocket().equals(s)) {
-
+                                                        srv = e;
 							if (e.isReceber()) {
 								sendFlag = true;
 
@@ -336,9 +337,7 @@ class tcp_chat_cli_con implements Runnable {
 							Client.controller.setNickRegisted(false);
 							Client.controller.setFlag(true);
 						} else {
-							Client.controller.recebeMsg(frase, s.
-														getInetAddress().
-														getHostAddress());
+							Client.controller.recebeMsg(frase,srv.getNome(), s.getInetAddress().getHostAddress());
 						}
 					}
 
