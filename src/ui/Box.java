@@ -823,7 +823,7 @@ public class Box extends javax.swing.JFrame {
 
 				StyledDocument doc = jTextPane1.getStyledDocument();
 				Style style = jTextPane1.addStyle("I'm a Style", null);
-                                Style style1 = jTextPane1.addStyle("I'm a Style1", null);
+				Style style1 = jTextPane1.addStyle("I'm a Style1", null);
 
 				boolean fl = false;
 				for (int d = 0; d < lNicks.size(); d++) {
@@ -843,7 +843,6 @@ public class Box extends javax.swing.JFrame {
 					int ni = lNicks.size();
 					StyleConstants.setForeground(style, lc.get(ni));
 					lNicks.add(ls[0]);
-					System.out.println("Tamanho = " + ni);
 
 				}
 
@@ -852,12 +851,17 @@ public class Box extends javax.swing.JFrame {
 				}
 
 				try {
-                                        StyleConstants.setForeground(style1, Color.BLACK);
-					doc.
-						insertString(doc.getLength(), "\n" + "<"+ ip + "> ", style1);
-                                      
-                                        doc.
-						insertString(doc.getLength(),ls[0] + ": ", style);
+					if (jCheckBox1.isSelected()) {
+						StyleConstants.setForeground(style1, Color.BLACK);
+						doc.
+							insertString(doc.getLength(), "\n" + "<" + ip + "> ", style1);
+
+						doc.
+							insertString(doc.getLength(), ls[0] + ": ", style);
+					} else {
+						doc.
+							insertString(doc.getLength(), "\n" + ls[0] + ": ", style);
+					}
 				} catch (Exception e) {
 					System.out.println("Erro insert UI");
 				}
@@ -884,7 +888,7 @@ public class Box extends javax.swing.JFrame {
 
 				StyledDocument doc = jTextPane1.getStyledDocument();
 				Style style = jTextPane1.addStyle("I'm a Style", null);
-                                Style style1 = jTextPane1.addStyle("I'm a Style1", null);    
+				Style style1 = jTextPane1.addStyle("I'm a Style1", null);
 				boolean fl = false;
 				for (int d = 0; d < lNicks.size(); d++) {
 					if (lNicks.get(d).equals(ls[0])) {
@@ -912,12 +916,18 @@ public class Box extends javax.swing.JFrame {
 				}
 
 				try {
-					StyleConstants.setForeground(style1, Color.BLACK);
-					doc.
-						insertString(doc.getLength(), "\n" + "<"+ ip + "> ", style1);
-                                      
-                                        doc.
-						insertString(doc.getLength(),ls[0] + ": ", style);
+
+					if (jCheckBox1.isSelected()) {
+						StyleConstants.setForeground(style1, Color.BLACK);
+						doc.
+							insertString(doc.getLength(), "\n" + "<" + ip + "> ", style1);
+
+						doc.
+							insertString(doc.getLength(), ls[0] + ": ", style);
+					} else {
+						doc.
+							insertString(doc.getLength(), "\n" + ls[0] + ": ", style);
+					}
 				} catch (Exception e) {
 					System.out.println("Erro insert UI");
 				}
@@ -1003,6 +1013,7 @@ public class Box extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
         jButton7 = new javax.swing.JButton();
+        jCheckBox1 = new javax.swing.JCheckBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
@@ -1021,7 +1032,6 @@ public class Box extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("MultiChat - RCOMP");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        setSize(new java.awt.Dimension(500, 500));
 
         jButton1.setText("Enviar");
 
@@ -1046,6 +1056,8 @@ public class Box extends javax.swing.JFrame {
 
         jButton7.setText("Limpar Ecrã");
 
+        jCheckBox1.setText("Show IP");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -1055,9 +1067,12 @@ public class Box extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jCheckBox1)))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -1094,9 +1109,10 @@ public class Box extends javax.swing.JFrame {
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jTextField1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jButton7))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton7)
+                    .addComponent(jCheckBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addGap(13, 13, 13))
         );
 
@@ -1226,6 +1242,7 @@ public class Box extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;

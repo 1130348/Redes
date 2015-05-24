@@ -31,6 +31,7 @@ public class Notification extends javax.swing.JFrame {
 		setVisible(true);
 		this.janela = janela;
 		getResolution();
+		setIconImage(new ImageIcon("LIB\\logo.png").getImage());
 		jLabel2.setText(nick + ": " + message);
 		jPanel1.setBackground(Color.GRAY);
 
@@ -72,7 +73,6 @@ public class Notification extends javax.swing.JFrame {
 	private void sair() {
 		jButton3.setText("");
 		jButton3.setIcon(new ImageIcon("LIB\\fechar.png"));
-		jButton3.updateUI();
 		jButton3.addActionListener(new ActionListener() {
 
 			@Override

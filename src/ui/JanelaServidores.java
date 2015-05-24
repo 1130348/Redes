@@ -26,7 +26,7 @@ public class JanelaServidores extends javax.swing.JFrame {
 	 */
 	private Controller controller;
 
-	private List<String> nSa;
+	private List<Server> nSa;
 
 	public JanelaServidores(Controller controller) {
 		this.controller = controller;
@@ -36,16 +36,13 @@ public class JanelaServidores extends javax.swing.JFrame {
 		setIconImage(new ImageIcon("LIB\\server.png").getImage());
 		initComponents();
 		iniciaComboBox();
-		BotaoEnvia();
-		BotaoRecebe();
-		BotaoDisconnect();
 	}
 
 	private void iniciaComboBox() {
 
-		List<Server> sa = controller.getlServers();
+		List<Server> sa = controller.getlServersActivos();
 		for (int i = 0; i < sa.size(); i++) {
-			nSa.add(sa.get(i) + "-Connected-On-On");
+			nSa.add(sa.get(i));
 		}
 		System.out.println(nSa.size());
 		jComboBox1.removeAllItems();
@@ -54,70 +51,146 @@ public class JanelaServidores extends javax.swing.JFrame {
 			jComboBox1.addItem(nSa.get(i));
 		}
 
+		jComboBox1.setSelectedIndex(0);
+		Server s = sa.get(0);
+		if (s.isEnviar()) {
+			jCheckBox1.setSelected(false);
+			//jCheckBox1.setText("Desactivar Enviar");
+		} else {
+			jCheckBox1.setSelected(true);
+			//jCheckBox1.setText("Activar Enviar");
+		}
+
+		if (s.isReceber()) {
+			jCheckBox2.setSelected(false);
+			//jCheckBox2.setText("Desactivar Receber");
+		} else {
+			jCheckBox2.setSelected(true);
+			//jCheckBox2.setText("Activar Receber");
+		}
+
+		if (s.isEstado()) {
+			jCheckBox2.setSelected(false);
+			//jCheckBox2.setText("Desactivar Receber");
+		} else {
+			jCheckBox2.setSelected(true);
+			//jCheckBox2.setText("Activar Receber");
+		}
+
 		jComboBox1.addItemListener(new ItemListener() {
 
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (jComboBox1.getSelectedItem() != null) {
-					String f = (String) jComboBox1.getSelectedItem();
-					String lf[] = f.split("-");
-					if (lf[2].equals("On")) {
-						jButton1.setText("Desactivar Enviar");
-					} else {
-						jButton1.setText("Activar Enviar");
-					}
-					if (lf[3].equals("On")) {
-						jButton2.setText("Desactivar Receber");
-					} else {
-						jButton2.setText("Activar Receber");
-					}
-					if (lf[1].equals("On")) {
-						jButton3.setText("Disconnect");
-					} else {
-						jButton3.setText("Connect");
-					}
+
+				Server s = sa.get(jComboBox1.getSelectedIndex());
+				System.out.println(s.toString());
+				if (s.isEnviar()) {
+					jCheckBox1.setSelected(false);
+					//jCheckBox1.setText("Desactivar Enviar");
+				} else {
+					jCheckBox1.setSelected(true);
+					//jCheckBox1.setText("Activar Enviar");
 				}
-			}
-		});
 
-	}
+				if (s.isReceber()) {
+					jCheckBox2.setSelected(false);
+					//jCheckBox2.setText("Desactivar Receber");
+				} else {
+					jCheckBox2.setSelected(true);
+					//jCheckBox2.setText("Activar Receber");
+				}
 
-	private void BotaoEnvia() {
+				if (s.isEstado()) {
+					jCheckBox3.setSelected(false);
+					//jCheckBox3.setText("Disconnect");
+				} else {
+					jCheckBox3.setSelected(true);
+					//jCheckBox3.setText("Connect");
+				}
 
-		jButton1.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				String s = (String) jComboBox1.getSelectedItem();
-				jComboBox1.removeItem(jComboBox1.getSelectedItem());
-				String ls[] = s.split("-");
-			}
-		});
-
-	}
-
-	private void BotaoRecebe() {
-
-		jButton2.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
+				jCheckBox1.updateUI();
+				jCheckBox2.updateUI();
+				jCheckBox3.updateUI();
 
 			}
 		});
 
-	}
+		jCheckBox1.
+			addActionListener(new ActionListener() {
 
-	private void BotaoDisconnect() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
 
-		jButton3.addActionListener(new ActionListener() {
+					Server s = sa.get(jComboBox1.getSelectedIndex());
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
+					if (s.isEnviar()) {
+						//jCheckBox1.setText("Activar Enviar");
+						s.setEnviar(false);
+					} else {
+						//jCheckBox1.setText("Desactivar Enviar");
+						s.setEnviar(true);
+					}
 
-			}
-		});
+					for (Server nSa1 : nSa) {
+						if (nSa1.equals(s)) {
+							nSa1 = s;
+						}
+					}
+					controller.setlServersActivos(nSa);
+				}
+			});
+
+		jCheckBox2.
+			addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					Server s = sa.get(jComboBox1.getSelectedIndex());
+
+					if (s.isReceber()) {
+						//jCheckBox2.setText("Activar Receber");
+						s.setReceber(false);
+					} else {
+						//jCheckBox2.setText("Desactivar Receber");
+						s.setReceber(true);
+					}
+
+					for (Server nSa1 : nSa) {
+						if (nSa1.equals(s)) {
+							nSa1 = s;
+						}
+					}
+					controller.setlServersActivos(nSa);
+				}
+			});
+
+		jCheckBox3.
+			addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Server s = sa.get(jComboBox1.getSelectedIndex());
+
+					if (s.isEstado()) {
+						//jCheckBox3.setText("Connect");
+						s.setEstado(false);
+						s.setEnviar(false);
+						s.setReceber(false);
+					} else {
+						//jCheckBox3.setText("Disconnect");
+						s.setEstado(true);
+						s.setEnviar(true);
+						s.setReceber(true);
+					}
+					for (Server nSa1 : nSa) {
+						if (nSa1.equals(s)) {
+							nSa1 = s;
+						}
+					}
+					controller.setlServersActivos(nSa);
+				}
+			});
 
 	}
 
@@ -132,26 +205,23 @@ public class JanelaServidores extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jComboBox1 = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
+        jCheckBox3 = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Servidores");
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jButton1.setText("Desactiva Enviar");
+        jCheckBox1.setText("Enviar");
 
-        jButton2.setText("Desactiva Receber");
+        jCheckBox2.setText("Receber");
 
-        jButton3.setText("Disconnect");
+        jLabel3.setText("Server");
 
-        jLabel1.setText("Ip");
-
-        jLabel2.setText("Status-Enviar-Receber");
+        jCheckBox3.setText("Disconnect");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -160,35 +230,30 @@ public class JanelaServidores extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(23, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(59, 59, 59)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jButton1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2)
+                    .addComponent(jLabel3)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jCheckBox1)
                             .addGap(18, 18, 18)
-                            .addComponent(jButton3))))
+                            .addComponent(jCheckBox2)
+                            .addGap(18, 18, 18)
+                            .addComponent(jCheckBox3))
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(23, 23, 23))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43)
+                .addGap(30, 30, 30)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addContainerGap(49, Short.MAX_VALUE))
+                    .addComponent(jCheckBox1)
+                    .addComponent(jCheckBox2)
+                    .addComponent(jCheckBox3))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -206,12 +271,11 @@ public class JanelaServidores extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

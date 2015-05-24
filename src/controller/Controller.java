@@ -46,7 +46,7 @@ public class Controller {
 		lServers = new ArrayList<>();
 		lServersActivos = new ArrayList<>();
 		flag = false;
-		nickRegisted = false;
+		nickRegisted = true;
 		try {
 			cl = new Client(this);
 		} catch (Exception ex) {
@@ -96,7 +96,7 @@ public class Controller {
 	public void setlServersActivos(
 		List<Server> lServersActivos) {
 		this.lServersActivos = lServersActivos;
-		cl.setlServer(lServersActivos);
+		cl.setlServerConnected(lServersActivos);
 	}
 
 	public void connect() {
@@ -160,7 +160,7 @@ public class Controller {
 
 	public void recebeMsg(String text, String ip) {
 
-		box.recebeMensagem(text,ip);
+		box.recebeMensagem(text, ip);
 
 	}
 

@@ -29,266 +29,303 @@ import javax.swing.JOptionPane;
 
 class Client {
 
-    static Controller controller;
+	static Controller controller;
 
-    static InetAddress IPdestino;
+	static InetAddress IPdestino;
 
-    private static final int TIMEOUT = 1;
+	private static final int TIMEOUT = 1;
 
-    private String nick;
+	private String nick;
 
-    static Socket sock;
+	static Socket sock;
 
-    private boolean msgEnviada;
+	private boolean msgEnviada;
 
-    private DataOutputStream sOut;
+	private DataOutputStream sOut;
 
-    private String frase;
+	private String frase;
 
-    private byte[] data;
+	private byte[] data;
 
-    private List<Thread> lserverConn;
+	private List<Thread> lserverConn;
 
-    private List<Server> lServer;
+	public static List<Server> lServerConnected;
 
-    public static Semaphore sem = new Semaphore(1);
+	public static Semaphore sem = new Semaphore(1);
 
-    public Client(Controller c) {
-        msgEnviada = false;
-        controller = c;
-    }
+	public Client(Controller c) {
+		msgEnviada = false;
+		controller = c;
+	}
 
-    public void registaNick(String nick) {
+	public void registaNick(String nick) {
 
-        this.nick = nick;
-        this.frase = "\\changeNick " + nick;
-        enviaMsg(frase);
+		this.nick = nick;
+		this.frase = "\\changeNick " + nick;
+		enviaMsg(frase);
 
-    }
+	}
 
-    public boolean testaConexao(Server ser) throws SocketException, IOException {
+	public boolean testaConexao(Server ser) throws SocketException, IOException {
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        DatagramSocket sock2 = new DatagramSocket();
-        sock2.setSoTimeout(1000 * TIMEOUT); /* definir o tempo limite do socket */
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		DatagramSocket sock2 = new DatagramSocket();
+		sock2.setSoTimeout(1000 * TIMEOUT); /* definir o tempo limite do socket */
 
-        IPdestino = ser.getIp();
-        System.out.println("IPdestino" + IPdestino.getHostAddress());
-        byte[] data2 = new byte[300];
-        String frase2 = "ConnectTest";
+		IPdestino = ser.getIp();
+		System.out.println("IPdestino" + IPdestino.getHostAddress());
+		byte[] data2 = new byte[300];
+		String frase2 = "ConnectTest";
 
-        data2 = frase2.getBytes();
-        DatagramPacket request = new DatagramPacket(data2, frase2.length(), IPdestino, 27004);
-        sock2.send(request);
-        DatagramPacket reply = new DatagramPacket(data2, data2.length);
-        try {
-            sock2.receive(reply);
-            frase2 = new String(reply.getData(), 0, reply.getLength());
-            for (int i = 0; i < controller.getlServersActivos().size(); i++) {
-                if (controller.getlServersActivos().get(i).getNome().equalsIgnoreCase(frase2)) {
-                    for (int j = 0; j < controller.getlServersActivos().size(); j++) {
-                        if (controller.getlServersActivos().get(j).getIp() == IPdestino) {
-                            if (!controller.getlServersActivos().get(j).isNomeVerificado()) {
-                                JOptionPane.
-                                        showMessageDialog(null, "Já existe um servidor com o nome " + frase2 + " logo o servidor não será adicionado.", "Erro", JOptionPane.INFORMATION_MESSAGE);
-                                return false;
-                            }
-                        }
-                    }
+		data2 = frase2.getBytes();
+		DatagramPacket request = new DatagramPacket(data2, frase2.length(), IPdestino, 27004);
+		sock2.send(request);
+		DatagramPacket reply = new DatagramPacket(data2, data2.length);
+		try {
+			sock2.receive(reply);
+			frase2 = new String(reply.getData(), 0, reply.getLength());
+			for (int i = 0; i < controller.getlServersActivos().size(); i++) {
+				if (controller.getlServersActivos().get(i).getNome().
+					equalsIgnoreCase(frase2)) {
+					for (int j = 0; j < controller.getlServersActivos().size(); j++) {
+						if (controller.getlServersActivos().get(j).getIp() == IPdestino) {
+							if (!controller.getlServersActivos().get(j).
+								isNomeVerificado()) {
+								JOptionPane.
+									showMessageDialog(null, "Já existe um servidor com o nome " + frase2 + " logo o servidor não será adicionado.", "Erro", JOptionPane.INFORMATION_MESSAGE);
+								return false;
+							}
+						}
+					}
 
-                }
-            }
+				}
+			}
 
-            for (int i = 0; i < controller.getlServersActivos().size(); i++) {
-                if (controller.getlServersActivos().get(i).getIp() == IPdestino) {
-                    controller.getlServersActivos().get(i).setNome(frase2);
-                    controller.getlServersActivos().get(i).setNomeVerificado(true);
-                }
-            }
-            System.out.println("Conectado com Sucesso");
-        } catch (SocketTimeoutException ex) {
-            System.out.println("O servidor não respondeu");
-            return false;
-        }
+			for (int i = 0; i < controller.getlServersActivos().size(); i++) {
+				if (controller.getlServersActivos().get(i).getIp() == IPdestino) {
+					controller.getlServersActivos().get(i).setNome(frase2);
+					controller.getlServersActivos().get(i).
+						setNomeVerificado(true);
+				}
+			}
+			System.out.println("Conectado com Sucesso");
+		} catch (SocketTimeoutException ex) {
+			System.out.println("O servidor não respondeu");
+			return false;
+		}
 
-        sock2.close();
-        return true;
-    }
+		sock2.close();
+		return true;
+	}
 
-    public void connectTCP() {
-        System.out.println(lServer.toString());
-        for (Server ser : lServer) {
+	public void connectTCP() {
+		System.out.println(lServerConnected.toString());
+		for (Server ser : lServerConnected) {
 
-            IPdestino = ser.getIp();
-            data = new byte[300];
+			ser.setEnviar(true);
+			ser.setReceber(true);
+			ser.setEstado(true);
 
-            try {
-                sock = new Socket(IPdestino, 27004);
-                ser.add(sock);
+			IPdestino = ser.getIp();
+			data = new byte[300];
 
-            } catch (IOException ex) {
-                String warn = IPdestino.getHostAddress();
-                JOptionPane.
-                        showMessageDialog(null, "Server: " + warn + " deixou de estar disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
-                //tirar server da lista
-            }
+			try {
+				sock = new Socket(IPdestino, 27004);
+				ser.add(sock);
 
-            Thread serverConn = new Thread(new tcp_chat_cli_con(sock));
-            serverConn.start();
+			} catch (IOException ex) {
+				String warn = IPdestino.getHostAddress();
+				JOptionPane.
+					showMessageDialog(null, "Server: " + warn + " deixou de estar disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
+				//tirar server da lista
+			}
+		}
 
-        }
+		for (Server rec : lServerConnected) {
+			Thread serverConn = new Thread(new tcp_chat_cli_con(rec.getSocket()));
+			serverConn.start();
+		}
 
-        synchronized (this) {
-            while (true) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    System.out.println("wait");
-                }
+		synchronized (this) {
+			while (true) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+					System.out.println("wait");
+				}
 
-                if (msgEnviada) {
+				if (msgEnviada) {
 
-                    if (frase.compareTo("sair") == 0) {
-                        try {
-                            sOut.write(0);
-                        } catch (IOException ex) {
-                            Logger.getLogger(Client.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        }
-                        break;
-                    }
-                    data = frase.getBytes();
+					if (frase.compareTo("sair") == 0) {
+						try {
+							sOut.write(0);
 
-                    for (Server serv : lServer) {
-                        sOut = null;
-                        try {
-                            sOut = new DataOutputStream(serv.getSocket().
-                                    getOutputStream());
-                        } catch (IOException ex) {
-                            Logger.getLogger(Client.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        }
-                        try {
-                            sOut.write((byte) frase.length());
-                        } catch (IOException ex) {
-                            Logger.getLogger(Client.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        }
-                        try {
-                            sOut.write(data, 0, (byte) frase.length());
-                        } catch (IOException ex) {
-                            Logger.getLogger(Client.class.getName()).
-                                    log(Level.SEVERE, null, ex);
-                        }
-                    }
-                    msgEnviada = false;
-                }
-            }
+						} catch (IOException ex) {
+							Logger.getLogger(Client.class
+								.getName()).
+								log(Level.SEVERE, null, ex);
+						}
+						break;
+					}
+					data = frase.getBytes();
 
-            for (Thread e : lserverConn) {
+					for (Server serv : lServerConnected) {
 
-                try {
-                    e.join();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Client.class.getName()).
-                            log(Level.SEVERE, null, ex);
-                }
-            }
+						if (serv.isEnviar()) {
+							sOut = null;
+							try {
+								sOut = new DataOutputStream(serv.getSocket().
+									getOutputStream());
 
-            for (Server se : lServer) {
+							} catch (IOException ex) {
+								Logger.getLogger(Client.class
+									.getName()).
+									log(Level.SEVERE, null, ex);
+							}
+							try {
+								sOut.write((byte) frase.length());
 
-                try {
-                    se.getSocket().close();
-                } catch (IOException ex) {
-                    Logger.getLogger(Client.class.getName()).
-                            log(Level.SEVERE, null, ex);
-                }
-            }
-        }
+							} catch (IOException ex) {
+								Logger.getLogger(Client.class
+									.getName()).
+									log(Level.SEVERE, null, ex);
+							}
+							try {
+								sOut.write(data, 0, (byte) frase.length());
 
-    }
+							} catch (IOException ex) {
+								Logger.getLogger(Client.class
+									.getName()).
+									log(Level.SEVERE, null, ex);
+							}
+						}
+					}
+					msgEnviada = false;
+				}
+			}
 
-    public String getNick() {
+			for (Thread e : lserverConn) {
 
-        return this.nick;
-    }
+				try {
+					e.join();
 
-    public void enviaMsg(String text) {
-        synchronized (this) {
-            frase = text;
-            msgEnviada = true;
-            this.notifyAll();
-        }
+				} catch (InterruptedException ex) {
+					Logger.getLogger(Client.class
+						.getName()).
+						log(Level.SEVERE, null, ex);
+				}
+			}
 
-    }
+			for (Server se : lServerConnected) {
 
-    public void setlServer(List<Server> lServersActivos) {
-        this.lServer = lServersActivos;
+				try {
+					se.getSocket().close();
 
-    }
+				} catch (IOException ex) {
+					Logger.getLogger(Client.class
+						.getName()).
+						log(Level.SEVERE, null, ex);
+				}
+			}
+		}
+
+	}
+
+	public String getNick() {
+
+		return this.nick;
+	}
+
+	public void enviaMsg(String text) {
+		synchronized (this) {
+			frase = text;
+			msgEnviada = true;
+			this.notifyAll();
+		}
+
+	}
+
+	public void setlServerConnected(List<Server> lServersConectados) {
+		this.lServerConnected = lServersConectados;
+
+	}
 
 }
 
 class tcp_chat_cli_con implements Runnable {
 
-    private Socket s;
-    private DataInputStream sIn;
-    private String frase;
-    private boolean msgRecebida;
+	private Socket s;
+	private DataInputStream sIn;
+	private String frase;
+	private boolean msgRecebida;
+	private boolean sendFlag;
 
-    public tcp_chat_cli_con(Socket tcp_s) {
-        s = tcp_s;
-        msgRecebida = true;
-    }
+	public tcp_chat_cli_con(Socket tcp_s) {
+		s = tcp_s;
+		msgRecebida = true;
+		sendFlag = false;
+	}
 
-    @Override
-    public void run() {
-        int nChars;
-        byte[] data = new byte[300];
+	@Override
+	public void run() {
+		int nChars;
+		byte[] data = new byte[300];
 
-        try {
-            sIn = new DataInputStream(s.getInputStream());
-            while (true) {
+		try {
+			sIn = new DataInputStream(s.getInputStream());
+			while (true) {
 
-                if (msgRecebida) {
-                    msgRecebida = true;
-                    nChars = sIn.read();
-                    if (nChars == 0) {
-                        break;
-                    }
+				if (msgRecebida) {
+					msgRecebida = true;
+					nChars = sIn.read();
+					if (nChars == 0) {
+						break;
+					}
 
-                    sIn.read(data, 0, nChars);
-                    System.out.println(nChars);
-                    frase = new String(data, 0, nChars);
-                    System.out.println("12 " + frase);
-                    try {
-                        Client.sem.acquire();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(tcp_chat_cli_con.class.getName()).
-                                log(Level.SEVERE, null, ex);
-                    }
+					sIn.read(data, 0, nChars);
+					frase = new String(data, 0, nChars);
+					System.out.println(frase);
+					try {
+						Client.sem.acquire();
+					} catch (InterruptedException ex) {
+						Logger.getLogger(tcp_chat_cli_con.class.getName()).
+							log(Level.SEVERE, null, ex);
+					}
+					for (Server e : Client.lServerConnected) {
+						if (e.getSocket().equals(s)) {
 
-                    if (frase.contains("\\nickChanged")) {
-                        Client.controller.setNickRegisted(true);
-                        Client.controller.setFlag(false);
-                    } else if (frase.contains("\\nickNotAllowed")) {
-                        Client.controller.setNickRegisted(false);
-                        Client.controller.setFlag(true);
-                    } else {
-                        Client.controller.recebeMsg(frase,s.getInetAddress().getHostAddress());
-                    }
+							if (e.isReceber()) {
+								sendFlag = true;
 
-                    Client.sem.release();
+							} else {
+								sendFlag = false;
+							}
+						}
+					}
+					if (sendFlag) {
+						if (frase.contains("\\nickChanged")) {
+							Client.controller.setFlag(false);
+						} else if (frase.contains("\\nickNotAllowed")) {
+							Client.controller.setNickRegisted(false);
+							Client.controller.setFlag(true);
+						} else {
+							Client.controller.recebeMsg(frase, s.
+														getInetAddress().
+														getHostAddress());
+						}
+					}
 
-                    msgRecebida = true;
-                }
-            }
-        } catch (IOException ex) {
-            System.out.println("Ligacao TCP terminada.");
-            String warn = IPdestino.getHostAddress();
-            JOptionPane.
-                    showMessageDialog(null, "Server: " + warn + " deixou de estar disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
-            //tirar da lista
-        }
-    }
+					Client.sem.release();
+
+					msgRecebida = true;
+				}
+			}
+		} catch (IOException ex) {
+			System.out.println("Ligacao TCP terminada.");
+			String warn = IPdestino.getHostAddress();
+			JOptionPane.
+				showMessageDialog(null, "Server: " + warn + " deixou de estar disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
+			//tirar da lista
+		}
+	}
 }
