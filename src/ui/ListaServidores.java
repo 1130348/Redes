@@ -478,7 +478,13 @@ public class ListaServidores extends javax.swing.JFrame {
 				}
 				if (controller.testConnection(lt2.get(j - 1))) {
 					//jProgressBar1.setValue(j * ((100 / tmn) + (100 % tmn)));
-					jProgressBar1.setValue(100 / tmn + jProgressBar1.getValue());
+                                        if((100 / tmn + jProgressBar1.getValue())>=99)
+                                        {
+                                            jProgressBar1.setValue(100);
+                                        } else {
+                                             jProgressBar1.setValue(100 / tmn + jProgressBar1.getValue());
+                                        }
+                                        
 					jProgressBar1.updateUI();
 					String warn = lt2.get(j - 1).getIp().getHostAddress();
 					JOptionPane.
