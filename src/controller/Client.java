@@ -293,7 +293,7 @@ class tcp_chat_cli_con implements Runnable {
 	@Override
 	public void run() {
 		int nChars;
-                Server srv=new Server();
+		Server srv = new Server();
 		byte[] data = new byte[300];
 
 		try {
@@ -317,7 +317,7 @@ class tcp_chat_cli_con implements Runnable {
 					}
 					for (Server e : Client.lServerConnected) {
 						if (e.getSocket().equals(s)) {
-                                                        srv = e;
+							srv = e;
 							if (e.isReceber()) {
 								sendFlag = true;
 
@@ -327,13 +327,20 @@ class tcp_chat_cli_con implements Runnable {
 						}
 					}
 					if (sendFlag) {
+
 						if (frase.contains("\\nickChanged")) {
 							Client.controller.setFlag(false);
 						} else if (frase.contains("\\nickNotAllowed")) {
 							Client.controller.setNickRegisted(false);
 							Client.controller.setFlag(true);
 						} else {
-							Client.controller.recebeMsg(frase,srv.getNome(), s.getInetAddress().getHostAddress());
+							if (!frase.contains("\\")) {
+								Client.controller.
+									recebeMsg(frase, srv.getNome(), s.
+											  getInetAddress().
+											  getHostAddress());
+							}
+
 						}
 					}
 
