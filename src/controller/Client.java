@@ -117,7 +117,6 @@ class Client {
 	}
 
 	public void connectTCP() {
-		System.out.println(lServerConnected.toString());
 		for (Server ser : lServerConnected) {
 
 			ser.setEnviar(true);
