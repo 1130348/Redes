@@ -573,14 +573,16 @@ public class Box extends javax.swing.JFrame {
 			ActionListener listener = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					java.awt.Window win[] = java.awt.Window.getWindows();
-					for (int i = 0; i < win.length; i++) {
-						win[i].dispose();
-					}
 					tray.remove(trayIcone);
 					File f = new File(getNameFile());
 					f.delete();
 					sairFromTray();
+					java.awt.Window win[] = java.awt.Window.getWindows();
+					for (int i = 0; i < win.length; i++) {
+						win[i].dispose();
+					}
+					System.exit(0);
+
 				}
 
 			};
@@ -651,25 +653,6 @@ public class Box extends javax.swing.JFrame {
 //				getImage("LIB\\logo.png");
 //			trayIcon.setImage(image);
 //		}
-	}
-
-	private void escreveNick() {
-		StyledDocument doc = jTextPane1.getStyledDocument();
-
-		Style style = jTextPane1.addStyle("I'm a Style", null);
-		StyleConstants.setForeground(style, Color.BLACK);
-
-		StyleConstants.setForeground(style, getColor());
-
-		try {
-			doc.
-				insertString(doc.getLength(), "\n" + controller.
-							 getMyNick() + ": ", style);
-			setCaretPosicao(doc.getLength());
-		} catch (BadLocationException eq) {
-		}
-
-		jTextPane1.setDocument(doc);
 	}
 
 	public void setColor(Color c) {
@@ -943,18 +926,30 @@ public class Box extends javax.swing.JFrame {
 
 				jTextPane1.setDocument(doc);
 				//jTextPane1.updateUI();
-				if (new File(getNameFile()).exists()) {
-					Notification n2;
-					if (!this.flag) {
-						n2 = new Notification(Box.this, ls[0], ls[1]);
-						playNotification();
-						this.flag = true;
-					} else {
-						n2 = new Notification(Box.this, ls[0], ls[1]);
-						playNotification();
-						this.flag = true;
+
+				Thread showNot = new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+
+						if (new File(getNameFile()).exists()) {
+							Notification n2;
+							if (!flag) {
+								n2 = new Notification(Box.this, ls[0], ls[1]);
+								playNotification();
+								flag = true;
+							} else {
+								n2 = new Notification(Box.this, ls[0], ls[1]);
+								playNotification();
+								flag = true;
+							}
+						}
+
 					}
-				}
+				});
+
+				showNot.start();
+
 				jTextField1.setText("");
 			}
 		}
@@ -990,6 +985,40 @@ public class Box extends javax.swing.JFrame {
 
 		ui.toFront();
 
+	}
+
+	public void insertInfo() {
+
+		StyledDocument doc = jTextPane1.getStyledDocument();
+		Style style = jTextPane1.addStyle("I'm a Style", null);
+		StyleConstants.setForeground(style, Color.BLACK);
+
+		try {
+			doc.
+				insertString(doc.getLength(), "\nErro: Não está conectado a nenhum servidor! A sair...", style);
+		} catch (Exception e) {
+			System.out.println("Erro insert UI");
+		}
+
+		jTextPane1.setDocument(doc);
+
+		Thread df = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(1000 * 2);
+					dispose();
+					ui.toFront();
+					ui.setEnabled(true);
+				} catch (InterruptedException ex) {
+					Logger.getLogger(Box.class.getName()).
+						log(Level.SEVERE, null, ex);
+				}
+
+			}
+		});
+		df.start();
 	}
 
 	/**

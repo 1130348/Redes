@@ -86,17 +86,29 @@ public class JanelaServidores extends javax.swing.JFrame {
 				System.out.println(s.toString());
 				if (s.isEnviar()) {
 					jCheckBox1.setSelected(false);
+					jCheckBox1.setEnabled(true);
+					jCheckBox2.setEnabled(true);
+					jCheckBox3.setEnabled(true);
 					//jCheckBox1.setText("Desactivar Enviar");
 				} else {
 					jCheckBox1.setSelected(true);
+					jCheckBox1.setEnabled(true);
+					jCheckBox2.setEnabled(true);
+					jCheckBox3.setEnabled(true);
 					//jCheckBox1.setText("Activar Enviar");
 				}
 
 				if (s.isReceber()) {
 					jCheckBox2.setSelected(false);
+					jCheckBox1.setEnabled(true);
+					jCheckBox2.setEnabled(true);
+					jCheckBox3.setEnabled(true);
 					//jCheckBox2.setText("Desactivar Receber");
 				} else {
 					jCheckBox2.setSelected(true);
+					jCheckBox1.setEnabled(true);
+					jCheckBox2.setEnabled(true);
+					jCheckBox3.setEnabled(true);
 					//jCheckBox2.setText("Activar Receber");
 				}
 
@@ -105,7 +117,9 @@ public class JanelaServidores extends javax.swing.JFrame {
 					//jCheckBox3.setText("Disconnect");
 				} else {
 					jCheckBox3.setSelected(true);
-					//jCheckBox3.setText("Connect");
+					jCheckBox1.setEnabled(false);
+					jCheckBox2.setEnabled(false);
+					jCheckBox3.setEnabled(false);
 				}
 
 				jCheckBox1.updateUI();
@@ -175,13 +189,9 @@ public class JanelaServidores extends javax.swing.JFrame {
 					if (s.isEstado()) {
 						//jCheckBox3.setText("Connect");
 						s.setEstado(false);
-						s.setEnviar(false);
-						s.setReceber(false);
-					} else {
-						//jCheckBox3.setText("Disconnect");
-						s.setEstado(true);
-						s.setEnviar(true);
-						s.setReceber(true);
+						controller.disconnectServer(s);
+						controller.enviaMsg("\\");
+
 					}
 					for (Server nSa1 : nSa) {
 						if (nSa1.equals(s)) {

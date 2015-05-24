@@ -641,6 +641,13 @@ public class ListaServidores extends javax.swing.JFrame {
 
 		if (valida(te.getText()) == true) {
 
+			if (controller.getlServersActivos().isEmpty()) {
+				if (!ls2.isEmpty()) {
+					controller.setlServersActivos(ls2);
+				}
+
+			}
+
 			System.out.println(controller.isFlag());
 
 			if (!controller.isFlag()) {
@@ -689,6 +696,8 @@ public class ListaServidores extends javax.swing.JFrame {
 						te.setText("");
 						controller.setNickRegisted(true);
 						controller.setFlag(true);
+						//testar controller.enviaMsg("\\Sair");
+						//controller.disconnect();
 						JOptionPane.
 							showMessageDialog(rootPane, "O seu Nickname já se encontra registado!", "Erro", JOptionPane.INFORMATION_MESSAGE);
 					}

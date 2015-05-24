@@ -27,6 +27,8 @@ public class Controller {
 
 	private boolean flag;
 
+	private boolean flagActiveServers;
+
 	private List<Server> lServersActivos;
 
 	private String myNick;
@@ -41,12 +43,16 @@ public class Controller {
 
 	private boolean nickRegisted;
 
+	private Server disconnectServ;
+
 	public Controller() {
 
 		lServers = new ArrayList<>();
 		lServersActivos = new ArrayList<>();
 		flag = false;
 		nickRegisted = true;
+		disconnectServ = null;
+		flagActiveServers = false;
 		try {
 			cl = new Client(this);
 		} catch (Exception ex) {
@@ -100,6 +106,7 @@ public class Controller {
 	}
 
 	public void connect() {
+		this.flagActiveServers = true;
 		Thread tt = new Thread(new Runnable() {
 
 			@Override
@@ -120,6 +127,7 @@ public class Controller {
 	public void disconnect() {
 		//cl.disconnectTCP();
 		this.flag = false;
+		this.flagActiveServers = false;
 
 	}
 
@@ -155,7 +163,13 @@ public class Controller {
 	}
 
 	public void enviaMsg(String text) {
-		cl.enviaMsg(text);
+		if (isFlagActiveServers()) {
+			cl.enviaMsg(text);
+
+		} else {
+			box.insertInfo();
+		}
+
 	}
 
 	public void recebeMsg(String text, String ip) {
@@ -188,6 +202,28 @@ public class Controller {
 
 	public void setFlag(boolean b) {
 		this.flag = b;
+	}
+
+	public void disconnectServer(Server s) {
+		this.disconnectServ = s;
+	}
+
+	public Server getdisconnectServer() {
+		return this.disconnectServ;
+	}
+
+	/**
+	 * @return the flagActiveServers
+	 */
+	public boolean isFlagActiveServers() {
+		return flagActiveServers;
+	}
+
+	/**
+	 * @param flagActiveServers the flagActiveServers to set
+	 */
+	public void setFlagActiveServers(boolean flagActiveServers) {
+		this.flagActiveServers = flagActiveServers;
 	}
 
 }

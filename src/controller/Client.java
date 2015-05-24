@@ -153,7 +153,10 @@ class Client {
 				} catch (InterruptedException e) {
 					System.out.println("wait");
 				}
-
+				if (lServerConnected.isEmpty()) {
+					controller.disconnect();
+					break;
+				}
 				if (msgEnviada) {
 
 					if (frase.compareTo("sair") == 0) {
@@ -170,6 +173,42 @@ class Client {
 					data = frase.getBytes();
 
 					for (Server serv : lServerConnected) {
+						if (controller.getdisconnectServer() != null) {
+							if (controller.getdisconnectServer().equals(serv)) {
+								frase = "\\Sair";
+								data = frase.getBytes();
+								sOut = null;
+								try {
+									sOut = new DataOutputStream(serv.getSocket().
+										getOutputStream());
+
+								} catch (IOException ex) {
+									Logger.getLogger(Client.class
+										.getName()).
+										log(Level.SEVERE, null, ex);
+								}
+								try {
+									sOut.write((byte) frase.length());
+
+								} catch (IOException ex) {
+									Logger.getLogger(Client.class
+										.getName()).
+										log(Level.SEVERE, null, ex);
+								}
+								try {
+									sOut.write(data, 0, (byte) frase.length());
+
+								} catch (IOException ex) {
+									Logger.getLogger(Client.class
+										.getName()).
+										log(Level.SEVERE, null, ex);
+								}
+								frase = "\\";
+								lServerConnected.remove(serv);
+								controller.disconnectServer(null);
+								break;
+							}
+						}
 
 						if (serv.isEnviar()) {
 							sOut = null;
@@ -201,18 +240,6 @@ class Client {
 						}
 					}
 					msgEnviada = false;
-				}
-			}
-
-			for (Thread e : lserverConn) {
-
-				try {
-					e.join();
-
-				} catch (InterruptedException ex) {
-					Logger.getLogger(Client.class
-						.getName()).
-						log(Level.SEVERE, null, ex);
 				}
 			}
 
