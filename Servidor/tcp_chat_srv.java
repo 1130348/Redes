@@ -35,7 +35,6 @@ class tcp_chat_srv {
 			name = getNameHashCode();
 		}
 
-
 		int i;
 		Thread serverConnTest = new Thread(new startUDP());
 		serverConnTest.start();
@@ -176,33 +175,38 @@ class tcp_chat_srv_conn implements Runnable {
 
 	private void executaComando(String comando) {
 		String rep = "teste";
-		String[] ls2 = comando.split(" ");
-		if (ls2[0].equals("\\changeNick")) {
-			boolean flag;
-			if (tcp_chat_srv.mapaNickIps.isEmpty()) {
-				tcp_chat_srv.mapaNickIps.put(getSocket(), ls2[1]);
-				frase = "\\nickChanged";
-			} else {
-				String[] n = tcp_chat_srv.mapaNickIps.values().
-					toArray(new String[0]);
-				for (String f : n) {
-					if ((f).equals(ls2[1])) {
-						frase = "\\nickNotAllowed";
-					} else {
-						if (tcp_chat_srv.mapaNickIps.containsKey(getSocket())) {
-							tcp_chat_srv.mapaNickIps.put(getSocket(), ls2[1]);
+		if (!comando.equals("\\")) {
+			String[] ls2 = comando.split(" ");
+			if (ls2[0].equals("\\changeNick")) {
+				boolean flag;
+				if (tcp_chat_srv.mapaNickIps.isEmpty()) {
+					tcp_chat_srv.mapaNickIps.put(getSocket(), ls2[1]);
+					frase = "\\nickChanged";
+				} else {
+					String[] n = tcp_chat_srv.mapaNickIps.values().
+						toArray(new String[0]);
+					for (String f : n) {
+						if ((f).equals(ls2[1])) {
+							frase = "\\nickNotAllowed";
 						} else {
-							tcp_chat_srv.mapaNickIps.put(getSocket(), ls2[1]);
+							if (tcp_chat_srv.mapaNickIps.
+								containsKey(getSocket())) {
+								tcp_chat_srv.mapaNickIps.
+									put(getSocket(), ls2[1]);
+							} else {
+								tcp_chat_srv.mapaNickIps.
+									put(getSocket(), ls2[1]);
+							}
+							frase = "\\nickChanged";
 						}
-						frase = "\\nickChanged";
 					}
 				}
+			} else {
+				rep = tcp_chat_srv.mapaNickIps.get(getSocket());
+				rep += "break";
+				rep += frase;
+				frase = rep;
 			}
-		} else {
-			rep = tcp_chat_srv.mapaNickIps.get(getSocket());
-			rep += "break";
-			rep += frase;
-			frase = rep;
 		}
 
 	}
