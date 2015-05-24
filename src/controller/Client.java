@@ -21,8 +21,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -33,7 +33,7 @@ class Client {
 
 	static InetAddress IPdestino;
 
-	private static int TIMEOUT = 3;
+	private static final int TIMEOUT = 1;
 
 	private String nick;
 
@@ -47,14 +47,13 @@ class Client {
 
 	private byte[] data;
 
-	private Thread serverConn;
-
-	private List<Socket> lsocks;
+	private List<Thread> lserverConn;
 
 	private List<Server> lServer;
 
+	public static Semaphore sem = new Semaphore(1);
+
 	public Client(Controller c) {
-		lsocks = new ArrayList<>();
 		msgEnviada = false;
 		controller = c;
 	}
@@ -70,28 +69,28 @@ class Client {
 	public boolean testaConexao(Server ser) throws SocketException, IOException {
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		DatagramSocket sock = new DatagramSocket();
-		sock.setSoTimeout(1000 * TIMEOUT); /* definir o tempo limite do socket */
+		DatagramSocket sock2 = new DatagramSocket();
+		sock2.setSoTimeout(1000 * TIMEOUT); /* definir o tempo limite do socket */
 
 		IPdestino = ser.getIp();
 		System.out.println("IPdestino" + IPdestino.getHostAddress());
-		byte[] data = new byte[300];
-		String frase = "ConnectTest";
+		byte[] data2 = new byte[300];
+		String frase2 = "ConnectTest";
 
-		data = frase.getBytes();
-		DatagramPacket request = new DatagramPacket(data, frase.length(), IPdestino, 27003);
-		sock.send(request);
-		DatagramPacket reply = new DatagramPacket(data, data.length);
+		data2 = frase2.getBytes();
+		DatagramPacket request = new DatagramPacket(data2, frase2.length(), IPdestino, 27004);
+		sock2.send(request);
+		DatagramPacket reply = new DatagramPacket(data2, data2.length);
 		try {
-			sock.receive(reply);
-			frase = new String(reply.getData(), 0, reply.getLength());
+			sock2.receive(reply);
+			frase2 = new String(reply.getData(), 0, reply.getLength());
 			System.out.println("Conectado com Sucesso");
 		} catch (SocketTimeoutException ex) {
 			System.out.println("O servidor não respondeu");
 			return false;
 		}
 
-		sock.close();
+		sock2.close();
 		return true;
 	}
 
@@ -103,16 +102,19 @@ class Client {
 			data = new byte[300];
 
 			try {
-				sock = new Socket(IPdestino, 27003);
+				sock = new Socket(IPdestino, 27004);
 				ser.add(sock);
+
 			} catch (IOException ex) {
 				String warn = IPdestino.getHostAddress();
 				JOptionPane.
 					showMessageDialog(null, "Server: " + warn + " deixou de estar disponível! ", "Erro", JOptionPane.INFORMATION_MESSAGE);
 				//tirar server da lista
 			}
+
 			Thread serverConn = new Thread(new tcp_chat_cli_con(sock));
 			serverConn.start();
+
 		}
 
 		synchronized (this) {
@@ -161,17 +163,25 @@ class Client {
 					msgEnviada = false;
 				}
 			}
-			try {
-				serverConn.join();
-			} catch (InterruptedException ex) {
-				Logger.getLogger(Client.class.getName()).
-					log(Level.SEVERE, null, ex);
+
+			for (Thread e : lserverConn) {
+
+				try {
+					e.join();
+				} catch (InterruptedException ex) {
+					Logger.getLogger(Client.class.getName()).
+						log(Level.SEVERE, null, ex);
+				}
 			}
-			try {
-				sock.close();
-			} catch (IOException ex) {
-				Logger.getLogger(Client.class.getName()).
-					log(Level.SEVERE, null, ex);
+
+			for (Server se : lServer) {
+
+				try {
+					se.getSocket().close();
+				} catch (IOException ex) {
+					Logger.getLogger(Client.class.getName()).
+						log(Level.SEVERE, null, ex);
+				}
 			}
 		}
 
@@ -217,33 +227,40 @@ class tcp_chat_cli_con implements Runnable {
 
 		try {
 			sIn = new DataInputStream(s.getInputStream());
-
 			while (true) {
-				while (!msgRecebida) {
 
+				if (msgRecebida) {
+					msgRecebida = true;
+					nChars = sIn.read();
+					if (nChars == 0) {
+						break;
+					}
+
+					sIn.read(data, 0, nChars);
+					System.out.println(nChars);
+					frase = new String(data, 0, nChars);
+					System.out.println("12 " + frase);
+					try {
+						Client.sem.acquire();
+					} catch (InterruptedException ex) {
+						Logger.getLogger(tcp_chat_cli_con.class.getName()).
+							log(Level.SEVERE, null, ex);
+					}
+
+					if (frase.contains("\\nickChanged")) {
+						Client.controller.setNickRegisted(true);
+						Client.controller.setFlag(false);
+					} else if (frase.contains("\\nickNotAllowed")) {
+						Client.controller.setNickRegisted(false);
+						Client.controller.setFlag(true);
+					} else {
+						Client.controller.recebeMsg(frase);
+					}
+
+					Client.sem.release();
+
+					msgRecebida = true;
 				}
-				nChars = sIn.read();
-				if (nChars == 0) {
-					break;
-				}
-
-				sIn.read(data, 0, nChars);
-				msgRecebida = false;
-				System.out.println(nChars);
-				frase = new String(data, 0, nChars);
-				System.out.println("12 " + frase);
-
-				if (frase.contains("\\nickChanged")) {
-					Client.controller.setNickRegisted(true);
-					Client.controller.setFlag(false);
-				} else if (frase.contains("\\nickNotAllowed")) {
-					Client.controller.setNickRegisted(false);
-					Client.controller.setFlag(true);
-				} else {
-					Client.controller.recebeMsg(frase);
-				}
-				msgRecebida = true;
-
 			}
 		} catch (IOException ex) {
 			System.out.println("Ligacao TCP terminada.");
