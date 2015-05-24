@@ -158,9 +158,9 @@ public class Controller {
 		cl.enviaMsg(text);
 	}
 
-	public void recebeMsg(String text) {
+	public void recebeMsg(String text, String ip) {
 
-		box.recebeMensagem(text);
+		box.recebeMensagem(text,ip);
 
 	}
 

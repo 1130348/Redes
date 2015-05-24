@@ -814,7 +814,7 @@ public class Box extends javax.swing.JFrame {
 		}
 	}
 
-	public void recebeMensagem(String s) {
+	public void recebeMensagem(String s, String ip) {
 
 		if (!s.contains("\\nick")) {
 			String ls[] = s.split("break");
@@ -823,6 +823,7 @@ public class Box extends javax.swing.JFrame {
 
 				StyledDocument doc = jTextPane1.getStyledDocument();
 				Style style = jTextPane1.addStyle("I'm a Style", null);
+                                Style style1 = jTextPane1.addStyle("I'm a Style1", null);
 
 				boolean fl = false;
 				for (int d = 0; d < lNicks.size(); d++) {
@@ -851,8 +852,12 @@ public class Box extends javax.swing.JFrame {
 				}
 
 				try {
+                                        StyleConstants.setForeground(style1, Color.BLACK);
 					doc.
-						insertString(doc.getLength(), "\n" + ls[0] + ": ", style);
+						insertString(doc.getLength(), "\n" + "<"+ ip + "> ", style1);
+                                      
+                                        doc.
+						insertString(doc.getLength(),ls[0] + ": ", style);
 				} catch (Exception e) {
 					System.out.println("Erro insert UI");
 				}
@@ -879,7 +884,7 @@ public class Box extends javax.swing.JFrame {
 
 				StyledDocument doc = jTextPane1.getStyledDocument();
 				Style style = jTextPane1.addStyle("I'm a Style", null);
-
+                                Style style1 = jTextPane1.addStyle("I'm a Style1", null);    
 				boolean fl = false;
 				for (int d = 0; d < lNicks.size(); d++) {
 					if (lNicks.get(d).equals(ls[0])) {
@@ -907,8 +912,12 @@ public class Box extends javax.swing.JFrame {
 				}
 
 				try {
+					StyleConstants.setForeground(style1, Color.BLACK);
 					doc.
-						insertString(doc.getLength(), "\n" + ls[0] + ": ", style);
+						insertString(doc.getLength(), "\n" + "<"+ ip + "> ", style1);
+                                      
+                                        doc.
+						insertString(doc.getLength(),ls[0] + ": ", style);
 				} catch (Exception e) {
 					System.out.println("Erro insert UI");
 				}
