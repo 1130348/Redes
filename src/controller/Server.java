@@ -165,4 +165,5 @@ public class Server {
     public void setNomeVerificado(boolean nomeVerificado) {
         this.nomeVerificado = nomeVerificado;
     }
+    
 }

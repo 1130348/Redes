@@ -70,7 +70,7 @@ class Client {
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		DatagramSocket sock2 = new DatagramSocket();
-		sock2.setSoTimeout(1000 * TIMEOUT); /* definir o tempo limite do socket */
+		sock2.setSoTimeout(250 * TIMEOUT); /* definir o tempo limite do socket */
 
 		IPdestino = ser.getIp();
 		System.out.println("IPdestino" + IPdestino.getHostAddress());

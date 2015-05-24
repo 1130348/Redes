@@ -682,7 +682,7 @@ public class Box extends javax.swing.JFrame {
 
 					StyledDocument doc = jTextPane1.
 						getStyledDocument();
-
+                                        
 					Style style = jTextPane1.
 						addStyle("I'm a Style", null);
 
