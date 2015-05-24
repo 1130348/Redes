@@ -656,8 +656,6 @@ public class ListaServidores extends javax.swing.JFrame {
 
             }
 
-            System.out.println(controller.isFlag());
-
             if (!controller.isFlag()) {
                 controller.connect();
             }

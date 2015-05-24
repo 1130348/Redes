@@ -44,7 +44,6 @@ public class JanelaServidores extends javax.swing.JFrame {
 		for (int i = 0; i < sa.size(); i++) {
 			nSa.add(sa.get(i));
 		}
-		System.out.println(nSa.size());
 		jComboBox1.removeAllItems();
 
 		for (int i = 0; i < nSa.size(); i++) {
@@ -83,7 +82,6 @@ public class JanelaServidores extends javax.swing.JFrame {
 			public void itemStateChanged(ItemEvent e) {
 
 				Server s = sa.get(jComboBox1.getSelectedIndex());
-				System.out.println(s.toString());
 				if (s.isEnviar()) {
 					jCheckBox1.setSelected(false);
 					jCheckBox1.setEnabled(true);

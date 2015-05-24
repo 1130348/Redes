@@ -73,7 +73,6 @@ class Client {
 		sock2.setSoTimeout(250 * TIMEOUT); /* definir o tempo limite do socket */
 
 		IPdestino = ser.getIp();
-		System.out.println("IPdestino" + IPdestino.getHostAddress());
 		byte[] data2 = new byte[300];
 		String frase2 = "ConnectTest";
 
@@ -108,7 +107,6 @@ class Client {
 						setNomeVerificado(true);
 				}
 			}
-			System.out.println("Conectado com Sucesso");
 		} catch (SocketTimeoutException ex) {
 			System.out.println("O servidor não respondeu");
 			return false;
@@ -312,7 +310,6 @@ class tcp_chat_cli_con implements Runnable {
 
 					sIn.read(data, 0, nChars);
 					frase = new String(data, 0, nChars);
-					System.out.println(frase);
 					try {
 						Client.sem.acquire();
 					} catch (InterruptedException ex) {

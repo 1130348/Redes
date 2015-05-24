@@ -552,7 +552,6 @@ public class Box extends javax.swing.JFrame {
 					nameFile += cont;
 				} else {
 					f = new File(nameFile);
-					System.out.println("Criou systemTray");
 					try {
 						f.createNewFile();
 					} catch (IOException ex) {
@@ -666,11 +665,6 @@ public class Box extends javax.swing.JFrame {
 	}
 
 	public void selectColor(Color c) {
-
-		for (String lNick : lNicks) {
-			System.out.println(lNick);
-		}
-
 		setColor(c);
 		String sd[];
 		sd = jTextPane1.getText().split("\n");
@@ -892,7 +886,6 @@ public class Box extends javax.swing.JFrame {
 					int ni = lNicks.size();
 					StyleConstants.setForeground(style, lc.get(ni));
 					lNicks.add(ls[0]);
-					System.out.println("Tamanho = " + ni);
 
 				}
 

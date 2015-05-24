@@ -35,7 +35,6 @@ class tcp_chat_srv {
 			name = getNameHashCode();
 		}
 
-		System.out.println("NOME: " + name);
 
 		int i;
 		Thread serverConnTest = new Thread(new startUDP());
@@ -114,7 +113,6 @@ class tcp_chat_srv_conn implements Runnable {
 				try {
 
 					frase = new String(data, 0, nChars);
-					System.out.println("Msg Recebida: " + frase);
 					if (frase.contains("\\")) {
 						if (frase.contains("Sair")) {
 							break;
@@ -132,14 +130,10 @@ class tcp_chat_srv_conn implements Runnable {
 						}
 					}
 
-					System.out.
-						println("Utilizadores:" + tcp_chat_srv.mapaNickIps.
-							values());
 				} catch (Exception ex) {
 					System.out.println(ex.toString());
 				}
 
-				System.out.println("Resposta: " + frase);
 				data = frase.getBytes();
 				nChars = frase.length();
 
