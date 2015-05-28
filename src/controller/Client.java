@@ -334,13 +334,12 @@ class tcp_chat_cli_con implements Runnable {
 							Client.controller.setNickRegisted(false);
 							Client.controller.setFlag(true);
 						} else {
-							if (!frase.contains("\\")) {
+							if (!frase.contains("\\Sair")) {
 								Client.controller.
 									recebeMsg(frase, srv.getNome(), s.
 											  getInetAddress().
 											  getHostAddress());
 							}
-
 						}
 					}
 

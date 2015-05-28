@@ -65,7 +65,7 @@ public class Notification extends javax.swing.JFrame {
 		if (width == 1366 && height == 768) {
 			setLocation(998, 638);
 		} else if (width == 1920 && height == 1080) {
-			setLocation(1366, 914);
+			setLocation(1500, 914);
 		}
 
 	}

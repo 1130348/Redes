@@ -230,28 +230,54 @@ public class Box extends javax.swing.JFrame {
 					}
 				} while (n.length() > 15 || n.length() == 0);
 
-				String sd[];
 				Thread changeNick = new Thread(new Runnable() {
 
 					@Override
 					public void run() {
 						controller.registaNick(n);
+
 					}
 				});
 				changeNick.start();
+				try {
+					changeNick.join();
+				} catch (InterruptedException ex) {
+					Logger.getLogger(Box.class.getName()).
+						log(Level.SEVERE, null, ex);
+				}
 
+				String sd[];
 				sd = jTextPane1.getText().split("\n");
 				jTextPane1.setText("");
 				for (int i = 0; i < sd.length; i++) {
 					String sd2[] = sd[i].split(":");
+					String sd3[] = sd2[0].split(">");
+					System.out.println(sd3[0]);
 					for (int j = 0; j < sd2.length; j++) {
-						if (sd2[j].equals(oldNick)) {
+
+						if (sd2[j].contains(oldNick)) {
 
 							StyledDocument doc = jTextPane1.
 								getStyledDocument();
 
 							Style style = jTextPane1.
 								addStyle("I'm a Style", null);
+
+							if (sd3[1].contains(".")) {
+								try {
+									doc.
+										insertString(doc.getLength(), sd3[0] + ">" + sd3[1].
+													 replace(controller.
+														 getMyNick(), ""), style);
+								} catch (BadLocationException ei) {
+								}
+							} else {
+								try {
+									doc.
+										insertString(doc.getLength(), sd3[0] + "> ", style);
+								} catch (BadLocationException ei) {
+								}
+							}
 
 							StyleConstants.setForeground(style, c);
 
@@ -341,6 +367,7 @@ public class Box extends javax.swing.JFrame {
 				}
 
 				jTextPane1.updateUI();
+
 			}
 		});
 
@@ -671,20 +698,39 @@ public class Box extends javax.swing.JFrame {
 		jTextPane1.setText("");
 		for (int i = 0; i < sd.length; i++) {
 			String sd2[] = sd[i].split(":");
+			String sd3[] = sd2[0].split(">");
+			System.out.println(sd3[0]);
 			for (int j = 0; j < sd2.length; j++) {
-				if (sd2[j].equals(controller.getMyNick())) {
+
+				if (sd2[j].contains(controller.getMyNick())) {
 
 					StyledDocument doc = jTextPane1.
 						getStyledDocument();
-                                        
+
 					Style style = jTextPane1.
 						addStyle("I'm a Style", null);
+
+					if (sd3[1].contains(".")) {
+						try {
+							doc.
+								insertString(doc.getLength(), sd3[0] + ">" + sd3[1].
+											 replace(controller.getMyNick(), ""), style);
+						} catch (BadLocationException ei) {
+						}
+					} else {
+						try {
+							doc.
+								insertString(doc.getLength(), sd3[0] + "> ", style);
+						} catch (BadLocationException ei) {
+						}
+					}
 
 					StyleConstants.setForeground(style, c);
 
 					try {
 						doc.
-							insertString(doc.getLength(), controller.getMyNick() + ":", style);
+							insertString(doc.getLength(), controller.
+										 getMyNick() + ":", style);
 					} catch (BadLocationException ei) {
 					}
 
@@ -795,7 +841,8 @@ public class Box extends javax.swing.JFrame {
 
 		if (!s.contains("\\nick")) {
 			String ls[] = s.split("break");
-			if (s.contains("\\sendImage")) {
+
+			if (ls[1].contains("\\sendImage")) {
 				String ls2[] = ls[1].split(" ");
 
 				StyledDocument doc = jTextPane1.getStyledDocument();
@@ -831,14 +878,14 @@ public class Box extends javax.swing.JFrame {
 					if (jCheckBox1.isSelected()) {
 						StyleConstants.setForeground(style1, Color.BLACK);
 						doc.
-							insertString(doc.getLength(), "\n" + "<" + namesrv + "> " + "("+ip+") ", style1);
+							insertString(doc.getLength(), "\n" + "<" + namesrv + "> " + "(" + ip + ") ", style1);
 
 						doc.
 							insertString(doc.getLength(), ls[0] + ": ", style);
 					} else {
 						doc.
 							insertString(doc.getLength(), "\n" + "<" + namesrv + "> ", style1);
-                                                doc.
+						doc.
 							insertString(doc.getLength(), ls[0] + ": ", style);
 					}
 				} catch (Exception e) {
@@ -862,7 +909,7 @@ public class Box extends javax.swing.JFrame {
 				setCaretPosicao(doc.getLength());
 				jTextPane1.setCaretPosition(getCaretPosicao());
 				jTextPane1.insertIcon(im);
-				//jTextPane1.updateUI();
+
 			} else {
 
 				StyledDocument doc = jTextPane1.getStyledDocument();
@@ -898,14 +945,14 @@ public class Box extends javax.swing.JFrame {
 					if (jCheckBox1.isSelected()) {
 						StyleConstants.setForeground(style1, Color.BLACK);
 						doc.
-							insertString(doc.getLength(), "\n" + "<" + namesrv + "> " + "("+ip+") ", style1);
+							insertString(doc.getLength(), "\n" + "<" + namesrv + "> " + "(" + ip + ") ", style1);
 
 						doc.
 							insertString(doc.getLength(), ls[0] + ": ", style);
 					} else {
 						doc.
 							insertString(doc.getLength(), "\n" + "<" + namesrv + "> ", style1);
-                                                doc.
+						doc.
 							insertString(doc.getLength(), ls[0] + ": ", style);
 					}
 				} catch (Exception e) {
